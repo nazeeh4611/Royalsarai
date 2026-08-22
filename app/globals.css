@@ -1,0 +1,356 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   ROYAL SARAI TECHNOLOGIES — DESIGN TOKENS
+   Temporary visual identity system. Centralised so it can be swapped for
+   official brand values (colour, type, logo) without touching components.
+   ========================================================================== */
+
+:root {
+  /* Surfaces — white primary, two ice-blue steps for section rhythm */
+  --paper: #ffffff;
+  --paper-dim: #e9eef7;
+  --paper-dim-2: #d2dceb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+
+  /* Ink */
+  --ink: #111111;
+  --ink-soft: #64748b;
+  --ink-faint: #8290a5;
+
+  /* Brand — indigo is the hero-only dark navy canvas (kept distinct from
+     the true-black .on-dark reserved for CTA bands). blue is the single
+     sparing accent; violet/gold are intentionally desaturated into
+     blue-gray/slate so no purple or coral survives in the UI even where a
+     component still references those token names. */
+  --indigo: #0b1f33;
+  --indigo-dark: #071522;
+  --blue: #315fe8;
+  --violet: #4a5b7a;
+  --violet-deep: #2e3b52;
+  --gold: #c8d7f5;
+  --gold-deep: #1f3f8f;
+
+  --line: #d8e0eb;
+  --line-strong: #c3cfe0;
+  --shadow-sm: 0 8px 30px rgba(30, 55, 90, 0.08);
+  --shadow-lg: 0 14px 40px rgba(30, 55, 90, 0.12);
+  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--blue) 20%, transparent),
+    0 14px 40px -10px color-mix(in srgb, var(--blue) 22%, transparent);
+
+  /* Hero video scrim: a restrained navy wash (not a dramatic dark gradient)
+     plus a secondary scrim concentrated behind the text column. */
+  --gradient-overlay: linear-gradient(
+    180deg,
+    rgba(7, 18, 31, 0.55) 0%,
+    rgba(7, 18, 31, 0.38) 45%,
+    rgba(7, 18, 31, 0.58) 100%
+  );
+  --gradient-text-scrim: linear-gradient(
+    90deg,
+    rgba(7, 18, 31, 0.72) 0%,
+    rgba(7, 18, 31, 0.32) 55%,
+    transparent 100%
+  );
+  /* The one decorative gradient used sparingly for icon chips/tiles —
+     light-blue into primary blue into navy. No violet, no coral. */
+  --gradient-tile: linear-gradient(145deg, var(--gold) 0%, var(--blue) 55%, var(--indigo) 100%);
+
+  /* Rhythm */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --container-max: 1400px;
+  --edge: clamp(1rem, 4vw, 3rem);
+
+  color-scheme: light;
+}
+
+/* True black — reserved specifically for full-width CTA/impact bands and
+   the closing brand statement, distinct from the navy used for the Hero. */
+.on-dark {
+  --paper: #000000;
+  --paper-dim: #141414;
+  --surface: #141414;
+  --surface-raised: #1a1a1a;
+  --ink: #ffffff;
+  --ink-soft: #b8c2d1;
+  --ink-faint: rgba(255, 255, 255, 0.5);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-paper-dim-2: var(--paper-dim-2);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-indigo: var(--indigo);
+  --color-indigo-dark: var(--indigo-dark);
+  --color-blue: var(--blue);
+  --color-violet: var(--violet);
+  --color-violet-deep: var(--violet-deep);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--blue);
+  color: #fff;
+}
+
+/* Accent glow used sparingly on primary hover states. */
+.glow-border {
+  border-color: color-mix(in srgb, var(--blue) 35%, var(--line-strong));
+  box-shadow: var(--shadow-glow);
+}
+
+.bg-gradient-overlay {
+  background: var(--gradient-overlay);
+}
+
+.bg-gradient-text-scrim {
+  background: var(--gradient-text-scrim);
+}
+
+.bg-gradient-tile {
+  background: var(--gradient-tile);
+}
+
+/* 100svh with a 100vh fallback for browsers that don't support the small
+   viewport unit yet — written as plain CSS so unsupported engines simply
+   keep the first declaration instead of losing the rule entirely. */
+.hero-viewport {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* Focus visibility kept intact for accessibility even with a custom cursor */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.edge {
+  padding-inline: var(--edge);
+}
+
+.container-max {
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+/* Hide the native cursor only when a premium pointer device is present and
+   the visitor hasn't asked for reduced motion. */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reveal primitive: JS toggles [data-revealed] once GSAP/IO confirms
+   visibility. No-JS / reduced-motion visitors simply see content unhidden. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+[data-reveal="fade"] {
+  transform: none;
+}
+
+[data-reveal="pop"] {
+  transform: scale(0.88);
+}
+
+[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Fine hairline rule used across sections instead of heavy borders */
+.hairline {
+  background: var(--line);
+  height: 1px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Animated underline for inline text links. Apply alongside a colour
+   transition; the underline sweeps in from the left on hover/focus. */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Persistent version of the underline for the nav's current-page indicator. */
+.link-underline-active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Breathing pulse ring used by the WhatsApp widget's idle state. */
+@keyframes breathe-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.breathe-ring {
+  animation: breathe-ring 2.6s ease-out infinite;
+}
+
+/* Continuous horizontal scroll used by the wordmark marquee divider. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 32s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Testimonials: slow continuous loop, pauses on hover/focus so a visitor
+   can read a card, edges fade into the section background. */
+@keyframes testimonial-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-track {
+  animation-name: testimonial-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.testimonial-track:hover,
+.testimonial-track:focus-within {
+  animation-play-state: paused;
+}
+
+.testimonial-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--edge),
+    black calc(100% - var(--edge)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--edge),
+    black calc(100% - var(--edge)),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-track {
+    animation: none;
+    transform: none;
+    flex-wrap: wrap;
+  }
+  .testimonial-track > *:last-child {
+    display: none;
+  }
+}
