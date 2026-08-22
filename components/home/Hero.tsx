@@ -14,9 +14,9 @@ const HERO_VIDEO = {
 };
 
 const words = [
-  { label: "web presence.", className: "text-gold" },
+  { label: "web presence.", className: "text-white" },
   { label: "cyber security.", className: "text-white" },
-  { label: "core systems.", className: "text-gold" },
+  { label: "core systems.", className: "text-white" },
   { label: "networks.", className: "text-white" },
 ];
 
@@ -65,7 +65,7 @@ export function Hero() {
 
   useEffect(() => {
     if (!cycle) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % words.length), 2600);
+    const id = setInterval(() => setIndex((i) => (i + 1) % words.length), 4200);
     return () => clearInterval(id);
   }, [cycle]);
 
@@ -76,7 +76,7 @@ export function Hero() {
     gsap.fromTo(
       el,
       { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
     );
   }, [index, reducedMotion]);
 
@@ -93,8 +93,8 @@ export function Hero() {
   const showVideo = !reducedMotion && !videoUnavailable;
 
   return (
-    <section className="hero-viewport relative isolate flex items-center overflow-hidden bg-indigo pt-24 pb-20">
-      <div className="absolute inset-0 -z-20">
+    <section className="hero-viewport relative isolate flex items-center overflow-hidden bg-indigo pt-24 pb-14">
+      <div className="absolute inset-0 -z-20 overflow-hidden">
         {showVideo ? (
           <video
             ref={videoRef}
@@ -103,7 +103,7 @@ export function Hero() {
             autoPlay
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             poster={HERO_VIDEO.poster}
             onError={() => setVideoUnavailable(true)}
           >
@@ -111,14 +111,16 @@ export function Hero() {
             <source src={HERO_VIDEO.mp4} type="video/mp4" />
           </video>
         ) : (
-          <Image
-            src={HERO_VIDEO.poster}
-            alt="Abstract dark-navy technology backdrop"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
+          <div className="hero-ken-burns absolute inset-0">
+            <Image
+              src={HERO_VIDEO.poster}
+              alt="Network engineers connecting structured cabling into a network switch"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
         )}
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-overlay" />
@@ -134,11 +136,11 @@ export function Hero() {
             Dubai, United Arab Emirates
           </div>
 
-          <h1 className="mt-6 text-[clamp(2.4rem,5.6vw,4.6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-white">
+          <h1 className="mt-6 text-[clamp(2.6rem,6.2vw,6rem)] font-extrabold leading-[0.98] tracking-[-0.025em] text-white">
             <span ref={line1Ref} className="block text-balance">
               Technology, engineered for
             </span>
-            <div className="mt-1 block h-[1.2em] overflow-hidden">
+            <div className="mt-1 block h-[1.15em] overflow-hidden">
               <span ref={wordRef} className={`block ${words[index].className}`}>
                 {words[index].label}
               </span>
@@ -147,7 +149,7 @@ export function Hero() {
 
           <p
             ref={subRef}
-            className="mt-6 max-w-lg text-base leading-relaxed text-white/72"
+            className="mt-7 max-w-lg text-lg leading-relaxed text-white/72"
           >
             Royal Sarai Technologies is a Dubai-based technology company
             delivering web design, cyber security, computer systems and IT
@@ -155,12 +157,12 @@ export function Hero() {
             operate across borders.
           </p>
 
-          <div ref={ctaRef} className="mt-8 flex flex-wrap items-center gap-4">
+          <div ref={ctaRef} className="mt-7 flex flex-wrap items-center gap-4">
             <MagneticButton
               href="/contact"
               variant="solid"
               cursorLabel="Go"
-              className="!bg-white !text-ink shadow-[var(--shadow-lg)] hover:!bg-blue hover:!text-white"
+              className="!bg-white !text-ink shadow-[var(--shadow-lg)] hover:!bg-ink hover:!text-white"
             >
               Start a Project
             </MagneticButton>
@@ -169,13 +171,13 @@ export function Hero() {
               variant="ghost"
               showArrow={false}
               cursorLabel="View"
-              className="!text-white hover:!text-gold"
+              className="!text-white hover:!text-white/65"
             >
               Explore Services
             </MagneticButton>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-7 flex flex-wrap gap-2">
             {siteConfig.licensedActivities.map((activity) => (
               <Link
                 key={activity.slug}
@@ -187,7 +189,7 @@ export function Hero() {
             ))}
           </div>
 
-          <p className="mt-8 text-xs font-medium uppercase tracking-[0.12em] text-white/45">
+          <p className="mt-6 text-xs font-medium uppercase tracking-[0.12em] text-white/45">
             Licensed by the Dubai Department of Economy &amp; Tourism ·
             License No. {siteConfig.registration.licenseNumber}
           </p>

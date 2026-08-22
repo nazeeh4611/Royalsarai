@@ -22,10 +22,10 @@ interface MagneticButtonProps {
 
 const variantClasses: Record<Variant, string> = {
   solid:
-    "bg-ink text-paper transition-colors duration-200 hover:bg-blue hover:text-white focus-visible:bg-blue focus-visible:text-white",
+    "bg-ink text-paper transition-colors duration-200 hover:bg-ink-soft focus-visible:bg-ink-soft",
   outline:
-    "border border-line text-ink bg-paper transition-colors duration-200 hover:bg-gold hover:border-blue/30",
-  ghost: "text-ink bg-transparent transition-colors duration-200 hover:text-blue",
+    "border border-line text-ink bg-paper transition-colors duration-200 hover:bg-ink hover:text-paper hover:border-ink",
+  ghost: "text-ink bg-transparent transition-colors duration-200 hover:text-ink-soft",
 };
 
 export function MagneticButton({

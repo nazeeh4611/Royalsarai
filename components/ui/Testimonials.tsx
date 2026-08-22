@@ -9,8 +9,8 @@ interface TestimonialsProps {
 
 function TestimonialCard({ t }: { t: TestimonialItem }) {
   return (
-    <figure className="flex h-full w-[300px] shrink-0 flex-col justify-between rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-blue/25 hover:shadow-[var(--shadow-lg)] sm:w-[360px]">
-      <Quote className="size-6 text-blue/70" strokeWidth={1.5} />
+    <figure className="flex h-full w-[300px] shrink-0 flex-col justify-between rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)] sm:w-[360px]">
+      <Quote className="size-6 text-ink-faint" strokeWidth={1.5} />
       <blockquote className="mt-6 flex-1 text-sm leading-relaxed text-ink-soft">
         &ldquo;{t.quote}&rdquo;
       </blockquote>

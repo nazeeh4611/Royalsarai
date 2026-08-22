@@ -155,6 +155,28 @@ body {
   min-height: 100svh;
 }
 
+@keyframes hero-ken-burns {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hero-ken-burns {
+  animation: hero-ken-burns 22s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ken-burns {
+    animation: none;
+  }
+}
+
 /* Focus visibility kept intact for accessibility even with a custom cursor */
 a:focus-visible,
 button:focus-visible,
@@ -171,16 +193,6 @@ button:focus-visible,
 .container-max {
   max-width: var(--container-max);
   margin-inline: auto;
-}
-
-/* Hide the native cursor only when a premium pointer device is present and
-   the visitor hasn't asked for reduced motion. */
-@media (hover: hover) and (pointer: fine) {
-  html.has-custom-cursor,
-  html.has-custom-cursor a,
-  html.has-custom-cursor button {
-    cursor: none;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

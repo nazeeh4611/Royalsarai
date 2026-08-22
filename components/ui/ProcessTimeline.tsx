@@ -80,21 +80,30 @@ export function ProcessTimeline() {
 
   return (
     <div ref={sectionRef}>
-      <div className="relative mb-2 hidden h-px w-full bg-line lg:block">
+      <div className="relative mb-10 hidden h-px w-full bg-line lg:block">
         <div
           ref={lineRef}
-          className="absolute inset-y-0 left-0 w-full origin-left bg-indigo"
+          className="absolute inset-y-0 left-0 w-full origin-left bg-ink"
           style={{ transform: "scaleX(0)" }}
         />
       </div>
 
-      <Stagger className="grid gap-10 sm:grid-cols-2 lg:grid-cols-6 lg:gap-6">
+      <Stagger className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {steps.map((step) => (
-          <div key={step.n} data-reveal className="lg:pt-8">
-            <span className="font-mono text-xs text-ink-faint">{step.n}</span>
-            <step.Icon className="mt-3 size-5 text-indigo" strokeWidth={1.6} />
-            <h3 className="mt-4 text-base font-semibold text-ink">{step.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+          <div key={step.n} data-reveal className="relative border-t border-line pt-6 lg:border-t-0 lg:pt-0">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-3 right-0 text-6xl font-extrabold leading-none text-ink/[0.06] sm:text-7xl"
+            >
+              {step.n}
+            </span>
+            <span className="relative flex size-12 items-center justify-center rounded-full border border-line-strong">
+              <step.Icon className="size-5 text-ink" strokeWidth={1.6} />
+            </span>
+            <h3 className="relative mt-5 text-xl font-bold tracking-[-0.01em] text-ink">
+              {step.title}
+            </h3>
+            <p className="relative mt-2 max-w-[22ch] text-sm leading-relaxed text-ink-soft">
               {step.description}
             </p>
           </div>

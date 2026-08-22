@@ -31,15 +31,15 @@ export function FAQAccordion({
               type="button"
               onClick={() => setOpen(isOpen ? null : i)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-6 py-6 text-left"
+              className="flex w-full items-center justify-between gap-6 py-8 text-left"
             >
-              <span className="text-base font-semibold text-ink sm:text-lg">
+              <span className="text-xl font-semibold text-ink sm:text-2xl">
                 {item.question}
               </span>
               <Plus
                 className={cn(
-                  "size-5 shrink-0 text-ink-faint transition-transform duration-300",
-                  isOpen && "rotate-45 text-blue"
+                  "size-6 shrink-0 text-ink-faint transition-transform duration-300",
+                  isOpen && "rotate-45 text-ink"
                 )}
               />
             </button>
@@ -48,7 +48,7 @@ export function FAQAccordion({
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr", opacity: isOpen ? 1 : 0 }}
             >
               <div className="overflow-hidden">
-                <p className="max-w-2xl pb-6 text-sm leading-relaxed text-ink-soft">
+                <p className="max-w-2xl pb-8 text-base leading-relaxed text-ink-soft">
                   {item.answer}
                 </p>
               </div>

@@ -1,11 +1,12 @@
 import { Hero } from "@/components/home/Hero";
 import { TrustIntro } from "@/components/home/TrustIntro";
-import { WordmarkMarquee } from "@/components/home/WordmarkMarquee";
 import { Services } from "@/components/home/Services";
+import { FullBleedShowcase } from "@/components/home/FullBleedShowcase";
 import { WhyRoyalSarai } from "@/components/home/WhyRoyalSarai";
+import { HowWeWork } from "@/components/home/HowWeWork";
 import { CTASection } from "@/components/home/CTASection";
-import { BrandStatement } from "@/components/home/BrandStatement";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { InsightsPreview } from "@/components/home/InsightsPreview";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { generalFAQs } from "@/lib/faq-general";
 import { faqSchema } from "@/lib/schema";
@@ -17,13 +18,14 @@ export default function Home() {
       <JsonLd data={faqSchema(generalFAQs)} />
       <Hero />
       <TrustIntro />
-      <WordmarkMarquee />
       <Services />
+      <FullBleedShowcase />
       <WhyRoyalSarai />
+      <HowWeWork />
       <TestimonialsSection />
+      <InsightsPreview />
       <FAQSection items={generalFAQs} id="faq" />
       <CTASection />
-      <BrandStatement />
     </>
   );
 }

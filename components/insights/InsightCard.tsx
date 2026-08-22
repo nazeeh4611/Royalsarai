@@ -26,7 +26,7 @@ export function InsightCard({ article }: { article: InsightArticle }) {
         />
       </div>
       <div className="flex flex-1 flex-col p-7">
-        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-indigo">
+        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-blue">
           {article.category}
         </span>
         <h3 className="mt-3 text-lg font-semibold leading-snug text-ink">
@@ -39,7 +39,7 @@ export function InsightCard({ article }: { article: InsightArticle }) {
           <span>
             {formatDate(article.publishedAt)} · {article.readingTime}
           </span>
-          <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-indigo" />
+          <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ink" />
         </div>
       </div>
     </Link>

@@ -7,16 +7,16 @@ export function WordmarkMarquee() {
   return (
     <div
       aria-hidden="true"
-      className="overflow-hidden border-y border-line bg-paper-dim py-7"
+      className="overflow-hidden border-y border-line bg-paper-dim py-9 lg:py-11"
     >
       <div className="marquee-track flex w-max items-center">
         {Array.from({ length: REPEATS }).map((_, i) => (
           <span
             key={i}
-            className="mx-7 flex shrink-0 items-center gap-7 text-[clamp(1.4rem,3.4vw,2.5rem)] font-extrabold uppercase leading-none tracking-[-0.01em] text-ink/85"
+            className="mx-8 flex shrink-0 items-center gap-8 text-[clamp(1.6rem,3.8vw,3rem)] font-extrabold uppercase leading-none tracking-[-0.01em] text-ink/85"
           >
             Royal Sarai Technologies
-            <span className="size-2 shrink-0 rounded-full bg-blue" />
+            <span className="size-2 shrink-0 rounded-full bg-ink/40" />
           </span>
         ))}
       </div>

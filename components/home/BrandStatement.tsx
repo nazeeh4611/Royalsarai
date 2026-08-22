@@ -5,7 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
  * real heading hierarchy). */
 export function BrandStatement() {
   return (
-    <section className="on-dark bg-paper py-20 text-ink lg:py-28">
+    <section className="on-dark bg-paper py-24 text-ink lg:py-36">
       <div className="edge container-max text-center">
         <Reveal>
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">

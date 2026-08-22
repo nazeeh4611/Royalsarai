@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
-import { CursorProvider } from "@/components/cursor/CustomCursor";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { Navbar } from "@/components/layout/Navbar";
@@ -75,15 +74,13 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        <CursorProvider>
-          <SmoothScroll>
-            <ScrollProgress />
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-            <WhatsAppWidget />
-          </SmoothScroll>
-        </CursorProvider>
+        <SmoothScroll>
+          <ScrollProgress />
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <WhatsAppWidget />
+        </SmoothScroll>
       </body>
     </html>
   );

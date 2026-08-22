@@ -29,7 +29,7 @@ export function Footer() {
         <div className="grid gap-16 border-b border-line pb-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <BrandMark className="h-9 w-9 text-gold" />
+              <BrandMark className="h-9 w-9 text-ink" />
               <span className="text-[0.85rem] font-extrabold leading-tight tracking-[0.03em]">
                 ROYAL SARAI
                 <span className="block text-[0.6rem] font-medium tracking-[0.3em] text-ink-faint">
@@ -44,7 +44,7 @@ export function Footer() {
             </p>
             <Link
               href="/contact"
-              className="link-underline mt-7 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-ink transition-colors hover:text-gold"
+              className="link-underline mt-7 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-ink transition-colors hover:text-ink/70"
             >
               Start a conversation
               <ArrowUpRight className="size-4" />
@@ -100,6 +100,26 @@ export function Footer() {
           <Link href="/privacy-policy" className="link-underline transition-colors hover:text-ink">
             Privacy Policy
           </Link>
+        </div>
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="overflow-hidden border-t border-line py-4"
+      >
+        <div
+          className="marquee-track flex w-max items-center"
+          style={{ animationDuration: "42s" }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span
+              key={i}
+              className="mx-6 flex shrink-0 select-none items-center gap-6 whitespace-nowrap text-[7.6vw] font-extrabold uppercase leading-none tracking-[-0.02em] text-ink"
+            >
+              Royal Sarai Technologies
+              <span className="size-[0.9vw] shrink-0 rounded-full bg-ink/30" />
+            </span>
+          ))}
         </div>
       </div>
     </footer>
