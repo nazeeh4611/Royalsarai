@@ -244,6 +244,18 @@ button:focus-visible,
   height: 1px;
 }
 
+/* Hides the native scrollbar on horizontally-scrollable rails (mobile
+   card sliders, the testimonials rail) while keeping real scrolling —
+   never pair this with disabling scroll itself. */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 .text-balance {
   text-wrap: balance;
 }
@@ -317,28 +329,9 @@ button:focus-visible,
   }
 }
 
-/* Testimonials: slow continuous loop, pauses on hover/focus so a visitor
-   can read a card, edges fade into the section background. */
-@keyframes testimonial-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.testimonial-track {
-  animation-name: testimonial-scroll;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-.testimonial-track:hover,
-.testimonial-track:focus-within {
-  animation-play-state: paused;
-}
-
+/* Testimonials rail: edges fade into the section background. The
+   auto-scroll itself is JS-driven (rAF nudging scrollLeft) so it can yield
+   to real touch/pointer scrolling — see components/ui/Testimonials.tsx. */
 .testimonial-mask {
   -webkit-mask-image: linear-gradient(
     to right,
@@ -356,13 +349,3 @@ button:focus-visible,
   );
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .testimonial-track {
-    animation: none;
-    transform: none;
-    flex-wrap: wrap;
-  }
-  .testimonial-track > *:last-child {
-    display: none;
-  }
-}

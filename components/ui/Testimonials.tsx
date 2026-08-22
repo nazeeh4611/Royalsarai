@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Quote } from "lucide-react";
 import { sampleTestimonials, type TestimonialItem } from "@/lib/testimonials";
 
@@ -7,9 +10,12 @@ interface TestimonialsProps {
   className?: string;
 }
 
-function TestimonialCard({ t }: { t: TestimonialItem }) {
+function TestimonialCard({ t, duplicate }: { t: TestimonialItem; duplicate?: boolean }) {
   return (
-    <figure className="flex h-full w-[300px] shrink-0 flex-col justify-between rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)] sm:w-[360px]">
+    <figure
+      aria-hidden={duplicate || undefined}
+      className="flex h-full w-[300px] shrink-0 snap-start flex-col justify-between rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)] sm:w-[360px]"
+    >
       <Quote className="size-6 text-ink-faint" strokeWidth={1.5} />
       <blockquote className="mt-6 flex-1 text-sm leading-relaxed text-ink-soft">
         &ldquo;{t.quote}&rdquo;
@@ -25,14 +31,54 @@ function TestimonialCard({ t }: { t: TestimonialItem }) {
 }
 
 /**
- * Slow, continuous auto-scrolling loop (pauses on hover/focus, respects
- * prefers-reduced-motion via CSS only — no client JS needed). The card set
- * is duplicated once for a seamless -50% loop; the duplicate is marked
- * aria-hidden so screen readers only encounter each testimonial once.
+ * Auto-scrolling loop driven by rAF nudging `scrollLeft` on a real
+ * `overflow-x-auto` track (not a CSS transform) so a visitor can drag/swipe
+ * through the cards at any time — any pointer/touch/focus interaction pauses
+ * the autoplay, which resumes after a short idle period. The card set is
+ * duplicated once for a seamless loop; the duplicate is `aria-hidden` so
+ * screen readers only encounter each testimonial once.
  */
 export function Testimonials({ items, placeholder = false, className }: TestimonialsProps) {
   const data = items ?? sampleTestimonials;
-  const duration = Math.max(data.length * 7, 24);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const pxPerSecond = 26;
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      if (!pausedRef.current) {
+        const half = el.scrollWidth / 2;
+        el.scrollLeft += pxPerSecond * dt;
+        if (el.scrollLeft >= half) el.scrollLeft -= half;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [data]);
+
+  const pause = () => {
+    pausedRef.current = true;
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+  };
+
+  const scheduleResume = () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      pausedRef.current = false;
+    }, 2600);
+  };
 
   return (
     <div className={className}>
@@ -43,22 +89,23 @@ export function Testimonials({ items, placeholder = false, className }: Testimon
         </p>
       )}
 
-      <div className="testimonial-mask -mx-[var(--edge)] overflow-hidden px-[var(--edge)]">
-        <div
-          className="testimonial-track flex w-max gap-5"
-          style={{ animationDuration: `${duration}s` }}
-        >
-          <div className="flex shrink-0 gap-5">
-            {data.map((t, i) => (
-              <TestimonialCard key={i} t={t} />
-            ))}
-          </div>
-          <div className="flex shrink-0 gap-5" aria-hidden="true">
-            {data.map((t, i) => (
-              <TestimonialCard key={`dup-${i}`} t={t} />
-            ))}
-          </div>
-        </div>
+      <div
+        ref={trackRef}
+        onPointerDown={pause}
+        onPointerUp={scheduleResume}
+        onPointerCancel={scheduleResume}
+        onMouseEnter={pause}
+        onMouseLeave={scheduleResume}
+        onFocus={pause}
+        onBlur={scheduleResume}
+        className="scrollbar-hide testimonial-mask -mx-[var(--edge)] flex snap-x snap-proximity gap-5 overflow-x-auto px-[var(--edge)]"
+      >
+        {data.map((t, i) => (
+          <TestimonialCard key={i} t={t} />
+        ))}
+        {data.map((t, i) => (
+          <TestimonialCard key={`dup-${i}`} t={t} duplicate />
+        ))}
       </div>
     </div>
   );

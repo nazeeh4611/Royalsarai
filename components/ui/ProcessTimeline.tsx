@@ -88,9 +88,13 @@ export function ProcessTimeline() {
         />
       </div>
 
-      <Stagger className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <Stagger className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 sm:overflow-visible sm:pb-0 lg:grid-cols-3 xl:grid-cols-6">
         {steps.map((step) => (
-          <div key={step.n} data-reveal className="relative border-t border-line pt-6 lg:border-t-0 lg:pt-0">
+          <div
+            key={step.n}
+            data-reveal
+            className="relative w-[82vw] shrink-0 snap-start rounded-[var(--radius-lg)] border border-line p-6 sm:w-auto sm:shrink sm:snap-align-none sm:rounded-none sm:border-0 sm:border-t sm:border-line sm:p-0 sm:pt-6 lg:border-t-0 lg:pt-0"
+          >
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -top-3 right-0 text-6xl font-extrabold leading-none text-ink/[0.06] sm:text-7xl"

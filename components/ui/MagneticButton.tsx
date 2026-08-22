@@ -74,7 +74,7 @@ export function MagneticButton({
       style={{ x: sx, y: sy }}
       className={cn(
         "group inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold transition-colors duration-200",
-        isFilled && "rounded-[var(--radius-sm)] px-[18px] py-[10px]",
+        isFilled && "rounded-[var(--radius-sm)] px-[20px] py-[13px]",
         variantClasses[variant],
         className
       )}

@@ -6,7 +6,7 @@ import { Counter } from "@/components/ui/Counter";
 
 export function TrustIntro() {
   return (
-    <section className="border-y border-line bg-paper py-16 lg:py-24">
+    <section className="border-y border-line bg-paper-dim py-16 lg:py-24">
       <div className="edge container-max grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
         <div>
           <Reveal>

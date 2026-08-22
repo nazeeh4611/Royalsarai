@@ -19,6 +19,13 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+  // Only the homepage opens on a dark, full-bleed hero — every other route's
+  // PageHero is light, so dark nav text already reads fine there even before
+  // any scrolling has happened. Once the user scrolls (or open) the floating
+  // light surface takes over everywhere, so this only matters pre-scroll.
+  const isHome = pathname === "/";
+  const lightNav = isHome && !scrolled;
+
   useEffect(() => {
     // Two thresholds, not one: with Lenis easing the scroll position,
     // a single cutoff flips back and forth every time the eased value
@@ -84,15 +91,28 @@ export function Navbar() {
         >
           <Link
             href="/"
-            className="flex items-center gap-2.5 text-ink"
+            className={cn(
+              "flex items-center gap-2.5 transition-colors duration-300",
+              lightNav ? "text-white" : "text-ink"
+            )}
             aria-label="Royal Sarai Technologies — home"
           >
-            <BrandMark className="h-8 w-8 text-indigo" />
+            <BrandMark
+              className={cn(
+                "h-8 w-8 transition-colors duration-300",
+                lightNav ? "text-white" : "text-indigo"
+              )}
+            />
             <span className="hidden text-[0.78rem] leading-[1.05] sm:block">
               <span className="block font-extrabold tracking-[0.03em]">
                 ROYAL SARAI
               </span>
-              <span className="block text-[0.62rem] font-medium tracking-[0.28em] text-ink-faint">
+              <span
+                className={cn(
+                  "block text-[0.62rem] font-medium tracking-[0.28em] transition-colors duration-300",
+                  lightNav ? "text-white/65" : "text-ink-faint"
+                )}
+              >
                 TECHNOLOGIES
               </span>
             </span>
@@ -107,8 +127,10 @@ export function Navbar() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "link-underline text-[0.78rem] font-semibold uppercase tracking-[0.09em] transition-colors hover:text-ink",
-                    active ? "link-underline-active text-ink" : "text-ink-soft"
+                    "link-underline text-[0.78rem] font-semibold uppercase tracking-[0.09em] transition-colors duration-300",
+                    lightNav
+                      ? cn("hover:text-white", active ? "link-underline-active text-white" : "text-white/70")
+                      : cn("hover:text-ink", active ? "link-underline-active text-ink" : "text-ink-soft")
                   )}
                 >
                   {item.label}
@@ -118,7 +140,15 @@ export function Navbar() {
           </nav>
 
           <div className="hidden lg:block">
-            <MagneticButton href="/contact" variant="solid" cursorLabel="Go">
+            <MagneticButton
+              href="/contact"
+              variant="solid"
+              cursorLabel="Go"
+              className={cn(
+                "transition-colors duration-300",
+                lightNav && "!bg-white !text-ink hover:!bg-white/90 focus-visible:!bg-white/90"
+              )}
+            >
               Start a Project
             </MagneticButton>
           </div>
@@ -126,7 +156,10 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex items-center justify-center rounded-full border border-line-strong p-2.5 text-ink lg:hidden"
+            className={cn(
+              "flex items-center justify-center rounded-full border p-2.5 transition-colors duration-300 lg:hidden",
+              lightNav ? "border-white/30 text-white" : "border-line-strong text-ink"
+            )}
             aria-label="Open menu"
           >
             <Menu className="size-5" />
