@@ -31,6 +31,20 @@ export function Hero() {
   const [cycle, setCycle] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    // Skip the autoplay video entirely below tablet width — it's the
+    // heaviest asset on the page and mobile visitors get no visual benefit
+    // from motion here that the already-optimized poster doesn't deliver.
+    // Cuts mobile page weight substantially and helps LCP/INP.
+    const mq = window.matchMedia("(max-width: 767px)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsSmallScreen(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsSmallScreen(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -81,16 +95,16 @@ export function Hero() {
   }, [index, reducedMotion]);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || isSmallScreen) return;
     const el = videoRef.current;
     if (!el) return;
     const playPromise = el.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => setVideoUnavailable(true));
     }
-  }, [reducedMotion]);
+  }, [reducedMotion, isSmallScreen]);
 
-  const showVideo = !reducedMotion && !videoUnavailable;
+  const showVideo = !reducedMotion && !videoUnavailable && !isSmallScreen;
 
   return (
     <section className="hero-viewport relative isolate flex items-center overflow-hidden bg-indigo pt-24 pb-14">
@@ -136,7 +150,7 @@ export function Hero() {
             Dubai, United Arab Emirates
           </div>
 
-          <h1 className="mt-6 text-[clamp(2.6rem,6.2vw,6rem)] font-extrabold leading-[0.98] tracking-[-0.025em] text-white">
+          <h1 className="mt-6 text-[clamp(2rem,6.2vw,6rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-white sm:leading-[0.98]">
             <span ref={line1Ref} className="block text-balance">
               Technology, engineered for
             </span>

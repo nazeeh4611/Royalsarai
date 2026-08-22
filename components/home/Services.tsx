@@ -120,29 +120,30 @@ export function Services() {
   return (
     <section id="services" className="bg-paper py-16 lg:py-24">
       <div className="edge container-max">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:gap-16">
-          <Reveal>
-            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
-              Core Services
-            </span>
-            <h2 className="mt-5 text-[clamp(2.2rem,4.2vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-ink text-balance">
-              Technology built around how your business works.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.08} className="flex flex-col gap-6">
-            <p className="text-lg leading-relaxed text-ink-soft lg:max-w-md">
-              We don&rsquo;t hand engagements between vendors. One team owns
-              web, security, systems and networks — end to end.
-            </p>
-            <Link
-              href="/services"
-              className="link-underline inline-flex w-fit items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-ink/70"
-            >
-              View all services
-              <ArrowUpRight className="size-4" />
-            </Link>
-          </Reveal>
-        </div>
+        <Reveal>
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
+            Core Services
+          </span>
+          <h2 className="mt-5 text-[clamp(2.2rem,4.2vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-ink text-balance">
+            Technology built around how your business works.
+          </h2>
+        </Reveal>
+        <Reveal
+          delay={0.08}
+          className="mt-6 flex flex-wrap items-end justify-between gap-6"
+        >
+          <p className="max-w-md text-lg leading-relaxed text-ink-soft">
+            We don&rsquo;t hand engagements between vendors. One team owns
+            web, security, systems and networks — end to end.
+          </p>
+          <Link
+            href="/services"
+            className="link-underline inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-ink/70"
+          >
+            View all services
+            <ArrowUpRight className="size-4" />
+          </Link>
+        </Reveal>
 
         {/* One card set, two layouts: a flex row that scroll-snaps on
            mobile, the same elements reflowing into a 2-column grid with

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
@@ -46,6 +46,16 @@ export const metadata: Metadata = {
     description:
       "Web design, cyber security, computer systems and IT network services — engineered in Dubai for businesses operating across borders.",
   },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1f33" },
+  ],
 };
 
 const organizationSchema = {
@@ -54,6 +64,8 @@ const organizationSchema = {
   name: siteConfig.legalName,
   alternateName: siteConfig.legalNameArabic,
   url: siteConfig.siteUrl,
+  logo: `${siteConfig.siteUrl}/icon`,
+  image: `${siteConfig.siteUrl}/icon`,
   email: siteConfig.contact.email,
   address: {
     "@type": "PostalAddress",
@@ -64,6 +76,14 @@ const organizationSchema = {
   knowsAbout: siteConfig.licensedActivities.map((a) => a.name),
 };
 
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.shortName,
+  url: siteConfig.siteUrl,
+  publisher: { "@type": "Organization", name: siteConfig.legalName },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -72,7 +92,9 @@ export default function RootLayout({
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([organizationSchema, websiteSchema]),
+          }}
         />
         <SmoothScroll>
           <ScrollProgress />

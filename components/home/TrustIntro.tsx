@@ -13,7 +13,7 @@ export function TrustIntro() {
             <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
               What we&rsquo;re licensed to deliver
             </span>
-            <p className="mt-6 max-w-md text-[clamp(1.7rem,2.8vw,2.5rem)] font-semibold leading-[1.22] tracking-[-0.015em] text-ink text-balance">
+            <p className="mt-6 text-[clamp(1.7rem,2.8vw,2.5rem)] font-semibold leading-[1.22] tracking-[-0.015em] text-ink text-balance">
               We don&rsquo;t chase every technology trend. Our practice sits
               inside four disciplines — a business&rsquo;s web presence, its
               data, its systems, and the network that carries them all.
