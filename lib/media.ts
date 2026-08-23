@@ -106,7 +106,9 @@ export const mediaLibrary = {
   }),
   "global-presence-hero": slot({
     category: "global-business",
-    alt: "Abstract global network connecting Dubai to international markets",
+    alt: "A world map showing connected network nodes across continents",
+    src: "/global.webp",
+    fit: "cover",
   }),
   "insights-hero": slot({
     category: "abstract-technology",

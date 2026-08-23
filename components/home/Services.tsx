@@ -68,7 +68,7 @@ function ServiceCard({
       type="button"
       onClick={onOpen}
       aria-haspopup="dialog"
-      className="group flex h-full w-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface text-left transition-all duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)]"
+      className="group flex h-full w-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-paper-dim text-left transition-all duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)]"
     >
       <div
         className={cn(

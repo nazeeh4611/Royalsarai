@@ -5,7 +5,7 @@ import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/ui/PageHero";
 import { Reveal, Stagger } from "@/components/ui/Reveal";
-import { NetworkGlobe } from "@/components/global/NetworkGlobe";
+import { MediaFrame } from "@/components/media/MediaFrame";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { CTASection } from "@/components/home/CTASection";
 
@@ -57,9 +57,13 @@ export default function GlobalPresencePage() {
         crumbs={[{ label: "Home", href: "/" }, { label: "Global Presence" }]}
       />
 
-      <section className="on-dark relative overflow-hidden bg-paper py-4 text-ink">
-        <div className="mx-auto aspect-[4/3] max-w-3xl text-ink-faint">
-          <NetworkGlobe />
+      <section className="border-t border-line bg-paper py-14 lg:py-20">
+        <div className="edge container-max">
+          <Reveal>
+            <div className="mx-auto aspect-[21/9] max-w-5xl overflow-hidden rounded-[var(--radius-lg)]">
+              <MediaFrame id="global-presence-hero" scene="mesh" tone="blue" rounded="none" className="h-full w-full" priority />
+            </div>
+          </Reveal>
         </div>
       </section>
 

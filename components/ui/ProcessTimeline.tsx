@@ -93,11 +93,11 @@ export function ProcessTimeline() {
           <div
             key={step.n}
             data-reveal
-            className="relative w-[82vw] shrink-0 snap-start rounded-[var(--radius-lg)] border border-line p-6 sm:w-auto sm:shrink sm:snap-align-none sm:rounded-none sm:border-0 sm:border-t sm:border-line sm:p-0 sm:pt-6 lg:border-t-0 lg:pt-0"
+            className="relative w-[82vw] shrink-0 snap-start overflow-hidden rounded-[var(--radius-lg)] border border-line p-6 sm:w-auto sm:shrink sm:snap-align-none sm:overflow-visible sm:rounded-none sm:border-0 sm:border-t sm:border-line sm:p-0 sm:pt-6 lg:border-t-0 lg:pt-0"
           >
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -top-3 right-0 text-6xl font-extrabold leading-none text-ink/[0.06] sm:text-7xl"
+              className="pointer-events-none absolute -top-1 right-0 text-5xl font-extrabold leading-none text-ink/[0.06] sm:-top-3 sm:text-6xl lg:text-7xl"
             >
               {step.n}
             </span>

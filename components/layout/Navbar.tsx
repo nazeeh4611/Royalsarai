@@ -97,7 +97,7 @@ export function Navbar() {
               height={229}
               className="h-6 w-auto sm:h-7"
             />
-            <span className="hidden self-end text-[0.62rem] font-medium tracking-[0.28em] text-ink-faint sm:block">
+            <span className="self-end text-[0.56rem] font-medium tracking-[0.22em] text-ink-faint sm:text-[0.62rem] sm:tracking-[0.28em]">
               TECHNOLOGIES
             </span>
           </Link>
