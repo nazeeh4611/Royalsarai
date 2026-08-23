@@ -56,8 +56,7 @@ export const siteConfig = {
     whatsappNumber: "971500000000",
   },
 
-  // PLACEHOLDER — no production domain has been confirmed yet.
-  siteUrl: "https://www.royalsaraitechnologies.com",
+  siteUrl: "https://royalsarai.ae",
 
   nav: [
     { label: "About", href: "/about" },

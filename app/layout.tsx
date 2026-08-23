@@ -7,6 +7,7 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CallWidget } from "@/components/widgets/CallWidget";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -71,12 +72,14 @@ export const viewport: Viewport = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  "@id": `${siteConfig.siteUrl}/#organization`,
   name: siteConfig.legalName,
   alternateName: siteConfig.legalNameArabic,
   url: siteConfig.siteUrl,
-  logo: `${siteConfig.siteUrl}/icon`,
-  image: `${siteConfig.siteUrl}/icon`,
+  logo: `${siteConfig.siteUrl}/apple-icon`,
+  image: `${siteConfig.siteUrl}/apple-icon`,
   email: siteConfig.contact.email,
+  telephone: siteConfig.contact.phoneDisplay,
   address: {
     "@type": "PostalAddress",
     addressLocality: siteConfig.location.city,
@@ -89,9 +92,11 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${siteConfig.siteUrl}/#website`,
   name: siteConfig.shortName,
   url: siteConfig.siteUrl,
-  publisher: { "@type": "Organization", name: siteConfig.legalName },
+  publisher: { "@id": `${siteConfig.siteUrl}/#organization` },
+  inLanguage: "en-AE",
 };
 
 export default function RootLayout({
@@ -100,12 +105,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${manrope.variable} ${archivoBlack.variable}`}>
       <body>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([organizationSchema, websiteSchema]),
-          }}
-        />
+        <JsonLd data={[organizationSchema, websiteSchema]} />
         <SmoothScroll>
           <ScrollProgress />
           <Navbar />

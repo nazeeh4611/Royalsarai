@@ -28,7 +28,7 @@ const words = ["Secure", "Connected", "Ready", "Automated", "Focused", "Scalable
 // smaller "list" next to a bigger headline: they're the same scale as
 // "Technology" itself. No side visual competes for width anymore, so this
 // is deliberately large — the type IS the hero.
-const HEADLINE_SIZE = "font-display text-[clamp(3.1rem,6vw,6.75rem)] font-normal leading-[0.94] tracking-[-0.01em]";
+const HEADLINE_SIZE = "font-display text-[clamp(3.1rem,6vw,6.75rem)] font-normal leading-[0.86] tracking-[-0.01em]";
 const WORD_TYPE_CLASS = cn(HEADLINE_SIZE, "block transition-colors duration-700 ease-out");
 
 const CYCLE_MS = 1800;
@@ -103,6 +103,12 @@ export function Hero() {
           stagger: 0.032,
           delay: 0.15,
           ease: "power4.out",
+          // Reverting once the reveal finishes hands the DOM back to one
+          // plain text node — at this display size, per-character spans
+          // left in place render with visibly worse kerning/antialiasing
+          // than a normal text run, so the resting headline shouldn't stay
+          // split any longer than the animation needs it to be.
+          onComplete: () => split?.revert(),
         });
       }
 
@@ -165,16 +171,20 @@ export function Hero() {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Each newly active row gets a soft focus-pull — scaling up from a
+  // Each newly active row gets a soft focus-pull — settling down from a
   // slight blur — layered on top of the plain colour transition and the
   // stack's own slide, so a word "arriving" reads as more than a repaint.
+  // Scale starts ABOVE 1 and settles down to it (never below) so the word
+  // is never mid-transition at a size smaller than "Technology" — it and
+  // every stack word share the exact same font-size class; this tween must
+  // not make that read as inconsistent at any point in the animation.
   useEffect(() => {
     if (reducedMotion) return;
     const el = itemRefs.current[tick];
     if (!el) return;
     gsap.fromTo(
       el,
-      { scale: 0.92, filter: "blur(10px)" },
+      { scale: 1.06, filter: "blur(10px)" },
       { scale: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }
     );
   }, [tick, reducedMotion]);
@@ -247,15 +257,22 @@ export function Hero() {
           Dubai, United Arab Emirates
         </div>
 
-        {/* lg+: equal columns (both "Technology" and the stack's longest
-           words run to ~10 characters at this same type scale, so a fixed/
-           uneven split can't be tuned to fit both at once — an even split
-           is the only ratio that's automatically safe at every viewport
-           width) with a tight gap-3, so "Technology" and the stack's
-           active word land close together on one shared row and read as a
-           single running phrase — "Technology Secure", "Technology
-           Connected" — rather than two separate headline blocks. */}
-        <div ref={gridRef} className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-3">
+        {/* lg+: the left track is `auto` — sized to "Technology"'s own
+           rendered width at whatever the current viewport's type scale
+           happens to be, not a fixed fraction of the row — so there's no
+           dead reserved space after the word before the stack column
+           starts. Paired with gap-12, "Technology" and the stack's active
+           word read as one running phrase with a clear word-space between
+           them — "Technology Secure", "Technology Connected" — while
+           `items-start` keeps both tracks' first line locked to the exact
+           same top offset (deliberately not `items-baseline`: the right
+           track's visible row is a scrolled-into-place child inside an
+           `overflow-hidden` list, and the grid's baseline detection would
+           anchor to that list's first DOM child instead of the transformed
+           visible one — `items-start` uses the container's own box edge,
+           which stays correct regardless of which row is scrolled into
+           view). */}
+        <div ref={gridRef} className="mt-6 grid gap-10 lg:grid-cols-[auto_1fr] lg:items-start lg:gap-12">
           {/* 1. TEXT — static headline, description, CTA. No inline
              cycling word at lg+: the adjacent stack column carries that
              role instead, so nothing is duplicated. */}

@@ -114,7 +114,7 @@ export const mediaLibrary = {
     category: "abstract-technology",
     alt: "Abstract technology and data visualisation",
     src: "/insihero.webp",
-    fit: "cover",
+    fit: "contain",
   }),
   "insight-security-architecture-before-first-line-of-code": slot({
     category: "cybersecurity",
