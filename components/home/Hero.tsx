@@ -28,7 +28,7 @@ const words = ["Secure", "Connected", "Ready", "Automated", "Focused", "Scalable
 // smaller "list" next to a bigger headline: they're the same scale as
 // "Technology" itself. No side visual competes for width anymore, so this
 // is deliberately large — the type IS the hero.
-const HEADLINE_SIZE = "font-display text-[clamp(3.1rem,6.8vw,6.9rem)] font-normal leading-[0.94] tracking-[-0.01em]";
+const HEADLINE_SIZE = "font-display text-[clamp(3.1rem,6vw,6.75rem)] font-normal leading-[0.94] tracking-[-0.01em]";
 const WORD_TYPE_CLASS = cn(HEADLINE_SIZE, "block transition-colors duration-700 ease-out");
 
 const CYCLE_MS = 1800;
@@ -224,10 +224,13 @@ export function Hero() {
         sizes="100vw"
         className="object-cover opacity-55"
       />
-      {/* Darkens the left/text half only — the image is already near-black
-         there, this just guarantees contrast — and leaves the light beam
-         and the word stack on the right untouched. */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/60 via-black/15 to-transparent" />
+      {/* A darkening scrim over the whole image, not just the text side —
+         herobg.webp's light beam sits right where the word stack lives, so
+         the right edge still needs a contrast floor even though the left
+         (behind the static headline/paragraph) gets extra darkening on
+         top of it. Without this, light text over the beam reads as barely
+         there. */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/45" />
 
       <div className="edge relative flex min-h-[100svh] flex-col justify-center gap-10 pb-24 pt-32 lg:gap-0 lg:pb-28 lg:pt-36">
         {/* Eyebrow sits ABOVE both the heading and the word stack (not
@@ -238,19 +241,21 @@ export function Hero() {
            independently-centered blocks with a gap between them. */}
         <div
           ref={eyebrowRef}
-          className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint"
+          className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/80"
         >
           <span ref={lineAccentRef} className="h-px w-8" style={{ backgroundColor: ACCENT_GOLD }} />
           Dubai, United Arab Emirates
         </div>
 
-        {/* lg+: the left track is fixed just wide enough for "Technology" (not
-           an even split) and sits a tight gap-3 from the stack column, so
-           "Technology" and the stack's active word land close together on
-           one shared row and read as a single running phrase — "Technology
-           Secure", "Technology Connected" — rather than two separate
-           headline blocks. */}
-        <div ref={gridRef} className="mt-6 grid gap-10 lg:grid-cols-[50rem_1fr] lg:items-start lg:gap-3">
+        {/* lg+: equal columns (both "Technology" and the stack's longest
+           words run to ~10 characters at this same type scale, so a fixed/
+           uneven split can't be tuned to fit both at once — an even split
+           is the only ratio that's automatically safe at every viewport
+           width) with a tight gap-3, so "Technology" and the stack's
+           active word land close together on one shared row and read as a
+           single running phrase — "Technology Secure", "Technology
+           Connected" — rather than two separate headline blocks. */}
+        <div ref={gridRef} className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-3">
           {/* 1. TEXT — static headline, description, CTA. No inline
              cycling word at lg+: the adjacent stack column carries that
              role instead, so nothing is duplicated. */}
@@ -266,7 +271,7 @@ export function Hero() {
               </div>
             </h1>
 
-            <p ref={subRef} className="mt-7 max-w-xs text-xl leading-relaxed text-ink-soft">
+            <p ref={subRef} className="mt-7 max-w-xs text-xl leading-relaxed text-white/85">
               A Dubai-based technology company delivering web design, cyber
               security, computer systems and IT network services — built
               locally, engineered for businesses that operate across
@@ -313,7 +318,7 @@ export function Hero() {
                   ref={(el) => {
                     itemRefs.current[i] = el;
                   }}
-                  className={cn(WORD_TYPE_CLASS, i !== tick && "text-ink-faint")}
+                  className={cn(WORD_TYPE_CLASS, i !== tick && "text-white/55")}
                   style={i === tick ? { color: ACCENT_GOLD } : undefined}
                 >
                   {word}

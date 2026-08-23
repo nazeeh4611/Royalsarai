@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
-import { BrandMark } from "@/components/icons/BrandMark";
 
 const columns = [
   {
@@ -28,15 +27,15 @@ export function Footer() {
       <div className="edge container-max">
         <div className="grid gap-16 border-b border-line pb-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <BrandMark className="h-9 w-9 text-ink" />
-              <span className="text-[0.85rem] font-extrabold leading-tight tracking-[0.03em]">
-                ROYAL SARAI
-                <span className="block text-[0.6rem] font-medium tracking-[0.3em] text-ink-faint">
-                  TECHNOLOGIES
-                </span>
+            <Link href="/" className="flex translate-y-[2px] flex-col items-start gap-1" aria-label="Royal Sarai Technologies — home">
+              {/* eslint-disable-next-line @next/next/no-img-element -- same
+                 plain <img> as Navbar.tsx: next/image's optimizer rejects
+                 SVG sources unless images.dangerouslyAllowSVG is set. */}
+              <img src="/logo.svg" alt="Royal Sarai" width={2096} height={229} className="h-8 w-auto" />
+              <span className="self-end text-[0.6rem] font-medium tracking-[0.3em] text-ink-faint">
+                TECHNOLOGIES
               </span>
-            </div>
+            </Link>
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-ink-soft">
               A Dubai-based technology company delivering web design, cyber
               security, computer systems and IT network services — engineered
