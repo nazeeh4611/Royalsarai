@@ -44,7 +44,22 @@ export default function ServicesOverviewPage() {
         title="Four licensed disciplines. One accountable team."
         description="Royal Sarai Technologies is licensed by the Dubai Department of Economy & Tourism to deliver web design, data management & cyber security, computer systems & software, and IT network services — each detailed below."
         crumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
-        visual={<MediaFrame id="services-overview-hero" scene="stack" tone="indigo" className="aspect-[4/3]" priority />}
+        visual={
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[var(--radius-lg)]">
+            <video
+              className="h-full w-full object-cover"
+              muted
+              autoPlay
+              loop
+              playsInline
+              preload="auto"
+              poster="/b296ef-poster.jpg"
+            >
+              <source src="/b296ef.mp4" type="video/mp4" />
+              <source src="/b296ef.webm" type="video/webm" />
+            </video>
+          </div>
+        }
       />
 
       <section className="border-t border-line bg-paper">

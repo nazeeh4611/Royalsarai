@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
           <div className="mt-10 flex flex-col gap-10">
             {sections.map((s) => (
               <Reveal key={s.title}>
-                <h2 className="text-lg font-semibold text-ink">{s.title}</h2>
+                <h2 className="text-lg font-bold text-ink">{s.title}</h2>
                 <p className="mt-3 text-sm leading-relaxed text-ink-soft">{s.body}</p>
               </Reveal>
             ))}

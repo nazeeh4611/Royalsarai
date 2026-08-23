@@ -51,9 +51,9 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="flex flex-col items-center rounded-[var(--radius-lg)] border border-line bg-surface px-8 py-16 text-center">
+      <div className="flex flex-col items-center py-8 text-center">
         <CheckCircle2 className="size-10 text-indigo" strokeWidth={1.5} />
-        <h3 className="mt-6 text-xl font-semibold text-ink">Message received</h3>
+        <h3 className="mt-6 text-xl font-bold text-ink">Message received</h3>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
           Thanks for reaching out. We&rsquo;ll review your project details
           and reply to the email address you provided.

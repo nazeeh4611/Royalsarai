@@ -59,7 +59,13 @@ export const mediaLibrary = {
   "service-web-hero": slot({
     category: "software-interface",
     alt: "A Royal Sarai Technologies web platform shown across desktop, tablet and mobile, with deployment status, analytics and technology stack panels",
-    src: "/webhome.png",
+    src: "/webdhome.webp",
+    fit: "contain",
+  }),
+  "service-web-detail-hero": slot({
+    category: "software-interface",
+    alt: "A laptop showing the Royal Sarai Technologies web platform builder in use",
+    src: "/webdesign.webp",
     fit: "contain",
   }),
   "service-cyber-hero": slot({
@@ -70,7 +76,7 @@ export const mediaLibrary = {
   }),
   "service-systems-hero": slot({
     category: "enterprise-technology",
-    src: "/softwarehome.webp",
+    src: "/web.webp",
     fit: "contain",
     alt: "Interconnected computer systems and custom software",
   }),
@@ -82,15 +88,21 @@ export const mediaLibrary = {
   }),
   "about-hero": slot({
     category: "dubai-architecture",
+    src: "/rslogo.webp",
+    fit: "contain",
     alt: "Modern Dubai architecture and skyline",
   }),
   "about-approach": slot({
     category: "modern-office",
     alt: "A focused technology team at work",
+    src: "/aboutdubai.webp",
+    fit: "cover",
   }),
   "industries-hero": slot({
     category: "global-business",
     alt: "Cross-industry enterprise technology in use",
+    src: "/industry.webp",
+    fit: "cover",
   }),
   "global-presence-hero": slot({
     category: "global-business",
@@ -99,6 +111,26 @@ export const mediaLibrary = {
   "insights-hero": slot({
     category: "abstract-technology",
     alt: "Abstract technology and data visualisation",
+    src: "/insighthero.webp",
+    fit: "cover",
+  }),
+  "insight-security-architecture-before-first-line-of-code": slot({
+    category: "cybersecurity",
+    src: "/cyberinsight.webp",
+    fit: "cover",
+    alt: "A digital shield representing security-first system design",
+  }),
+  "insight-website-rebuild-vs-redesign": slot({
+    category: "software-interface",
+    src: "/webhome.webp",
+    fit: "cover",
+    alt: "A web platform interface representing a website rebuild or redesign",
+  }),
+  "insight-what-network-resilience-means-for-a-growing-business": slot({
+    category: "network-infrastructure",
+    src: "/network.webp",
+    fit: "cover",
+    alt: "Technicians connecting network infrastructure hardware",
   }),
   "contact-hero": slot({
     category: "dubai-architecture",

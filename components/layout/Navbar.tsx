@@ -7,7 +7,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { siteConfig } from "@/lib/site-config";
-import { BrandMark } from "@/components/icons/BrandMark";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 function isActivePath(pathname: string, href: string) {
@@ -84,17 +83,22 @@ export function Navbar() {
         >
           <Link
             href="/"
-            className="flex items-center gap-2.5 text-ink"
+            className="flex translate-y-[6px] flex-col items-start gap-1 text-ink"
             aria-label="Royal Sarai Technologies — home"
           >
-            <BrandMark className="h-8 w-8 text-indigo" />
-            <span className="hidden text-[0.78rem] leading-[1.05] sm:block">
-              <span className="block font-extrabold tracking-[0.03em]">
-                ROYAL SARAI
-              </span>
-              <span className="block text-[0.62rem] font-medium tracking-[0.28em] text-ink-faint">
-                TECHNOLOGIES
-              </span>
+            {/* eslint-disable-next-line @next/next/no-img-element -- plain
+               <img>: next/image's optimizer rejects SVG sources unless
+               images.dangerouslyAllowSVG is set, which isn't worth turning
+               on for one static logo asset. */}
+            <img
+              src="/logo.svg"
+              alt="Royal Sarai"
+              width={2096}
+              height={229}
+              className="h-6 w-auto sm:h-7"
+            />
+            <span className="hidden self-end text-[0.62rem] font-medium tracking-[0.28em] text-ink-faint sm:block">
+              TECHNOLOGIES
             </span>
           </Link>
 
@@ -145,10 +149,8 @@ export function Navbar() {
           >
             <div className="flex items-center justify-between px-[var(--edge)] py-7">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5 text-ink">
-                <BrandMark className="h-8 w-8 text-gold" />
-                <span className="text-[0.78rem] font-extrabold tracking-[0.03em]">
-                  ROYAL SARAI
-                </span>
+                {/* eslint-disable-next-line @next/next/no-img-element -- see header above */}
+                <img src="/logo.svg" alt="Royal Sarai" width={2096} height={229} className="h-7 w-auto" />
               </Link>
               <button
                 type="button"

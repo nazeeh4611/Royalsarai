@@ -14,13 +14,17 @@ function TestimonialCard({ t, duplicate }: { t: TestimonialItem; duplicate?: boo
   return (
     <figure
       aria-hidden={duplicate || undefined}
-      className="flex h-full w-[300px] shrink-0 snap-start flex-col justify-between rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)] sm:w-[360px]"
+      className="flex h-[400px] w-[300px] shrink-0 snap-start flex-col rounded-[var(--radius-md)] border border-line bg-surface p-8 shadow-[var(--shadow-sm)] transition-shadow duration-300 hover:border-ink-faint/40 hover:shadow-[var(--shadow-lg)] sm:w-[360px]"
     >
-      <Quote className="size-6 text-ink-faint" strokeWidth={1.5} />
-      <blockquote className="mt-6 flex-1 text-sm leading-relaxed text-ink-soft">
+      <Quote className="size-6 shrink-0 text-ink-faint" strokeWidth={1.5} />
+      {/* Fixed card height + a clamped quote (same line count for every
+         card, regardless of quote length) is what actually guarantees
+         every card measures the same — flex `h-full` alone let cards with
+         short quotes end up visibly shorter than ones with long quotes. */}
+      <blockquote className="mt-6 line-clamp-6 flex-1 text-sm leading-relaxed text-ink-soft">
         &ldquo;{t.quote}&rdquo;
       </blockquote>
-      <figcaption className="mt-7 border-t border-line pt-5 text-sm">
+      <figcaption className="mt-7 shrink-0 border-t border-line pt-5 text-sm">
         <span className="block font-semibold text-ink">{t.name}</span>
         <span className="text-ink-faint">
           {t.role}, {t.company}

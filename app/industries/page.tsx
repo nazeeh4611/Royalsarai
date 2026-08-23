@@ -108,7 +108,7 @@ export default function IndustriesPage() {
             {industries.map((industry) => (
               <div key={industry.name} data-reveal className="bg-surface p-8">
                 <industry.Icon className="size-6 text-indigo" strokeWidth={1.6} />
-                <h2 className="mt-5 text-base font-semibold text-ink">
+                <h2 className="mt-5 text-base font-bold text-ink">
                   {industry.name}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">

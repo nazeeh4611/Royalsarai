@@ -46,14 +46,9 @@ export const siteConfig = {
     },
   ],
 
-  // PLACEHOLDER — the licence lists a personal mobile and a non-professional
-  // inbox (11@gmail.com). Publishing those on a premium corporate site would
-  // undercut the credibility this build is going for, so this contact block
-  // uses placeholder values in the same format until the client supplies a
-  // monitored business line and inbox. Swap these two fields when confirmed.
   contact: {
-    phoneDisplay: "+971 4 XXX XXXX",
-    phoneHref: "tel:+9714XXXXXXX",
+    phoneDisplay: "+971 55 413 7228",
+    phoneHref: "tel:+971554137228",
     email: "info@royalsaraitechnologies.com",
     // PLACEHOLDER — digits only (country code, no "+", no spaces), used to
     // build the wa.me deep link in the WhatsApp widget. This is not a real,

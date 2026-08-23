@@ -14,10 +14,12 @@
   --surface: #ffffff;
   --surface-raised: #ffffff;
 
-  /* Ink */
+  /* Ink — soft/faint darkened from the original #64748b/#8290a5: body
+     copy read as too light grey on white, this keeps the same slate
+     character while raising contrast. */
   --ink: #111111;
-  --ink-soft: #64748b;
-  --ink-faint: #8290a5;
+  --ink-soft: #47536a;
+  --ink-faint: #6b7890;
 
   /* Brand — indigo is the hero-only dark navy canvas (kept distinct from
      the true-black .on-dark reserved for CTA bands). blue is the single

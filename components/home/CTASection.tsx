@@ -24,7 +24,7 @@ export function CTASection() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <h2 className="mt-6 max-w-3xl text-[clamp(2.5rem,6vw,5.5rem)] font-bold leading-[1] tracking-[-0.025em] text-ink text-balance">
+          <h2 className="mt-6 max-w-3xl text-[clamp(2.5rem,6vw,5.5rem)] font-extrabold leading-[1] tracking-[-0.025em] text-ink text-balance">
             Have a technology project in mind? Let&rsquo;s scope it together.
           </h2>
         </Reveal>

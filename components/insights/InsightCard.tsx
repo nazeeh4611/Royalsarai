@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { AbstractScene } from "@/components/media/AbstractScene";
+import { MediaFrame } from "@/components/media/MediaFrame";
 import type { InsightArticle } from "@/lib/insights-content";
+import type { MediaId } from "@/lib/media";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-GB", {
@@ -19,17 +20,19 @@ export function InsightCard({ article }: { article: InsightArticle }) {
       className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-surface transition-transform duration-500 hover:-translate-y-1"
     >
       <div className="aspect-[16/10] w-full">
-        <AbstractScene
-          variant={article.scene.variant}
+        <MediaFrame
+          id={`insight-${article.slug}` as MediaId}
+          scene={article.scene.variant}
           tone={article.scene.tone}
-          alt={article.title}
+          rounded="none"
+          className="h-full w-full"
         />
       </div>
       <div className="flex flex-1 flex-col p-7">
         <span className="text-xs font-semibold uppercase tracking-[0.1em] text-blue">
           {article.category}
         </span>
-        <h3 className="mt-3 text-lg font-semibold leading-snug text-ink">
+        <h3 className="mt-3 text-lg font-bold leading-snug text-ink">
           {article.title}
         </h3>
         <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">

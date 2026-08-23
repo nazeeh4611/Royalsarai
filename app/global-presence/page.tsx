@@ -94,7 +94,7 @@ export default function GlobalPresencePage() {
           <Stagger className="mt-10 grid gap-10 sm:grid-cols-3">
             <div data-reveal>
               <Globe2 className="size-6 text-indigo" strokeWidth={1.6} />
-              <h3 className="mt-4 text-base font-semibold text-ink">Remote-first delivery</h3>
+              <h3 className="mt-4 text-base font-bold text-ink">Remote-first delivery</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                 Design, engineering and project management run through
                 standard cloud tools — no requirement to be on-site in Dubai.
@@ -102,7 +102,7 @@ export default function GlobalPresencePage() {
             </div>
             <div data-reveal>
               <Clock className="size-6 text-indigo" strokeWidth={1.6} />
-              <h3 className="mt-4 text-base font-semibold text-ink">Time-zone aware scheduling</h3>
+              <h3 className="mt-4 text-base font-bold text-ink">Time-zone aware scheduling</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                 A shared working window is agreed with every international
                 client, with async updates outside of it.
@@ -110,7 +110,7 @@ export default function GlobalPresencePage() {
             </div>
             <div data-reveal>
               <FileSignature className="size-6 text-indigo" strokeWidth={1.6} />
-              <h3 className="mt-4 text-base font-semibold text-ink">Structured agreements</h3>
+              <h3 className="mt-4 text-base font-bold text-ink">Structured agreements</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                 Engagements and contracts are scoped to fit a client&rsquo;s
                 own jurisdiction and requirements wherever possible.

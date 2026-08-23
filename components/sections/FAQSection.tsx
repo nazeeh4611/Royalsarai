@@ -32,7 +32,7 @@ export function FAQSection({
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
             {eyebrow}
           </span>
-          <h2 className="mt-4 text-[clamp(2.2rem,4vw,3.2rem)] font-bold leading-[1.08] tracking-[-0.02em] text-ink text-balance">
+          <h2 className="mt-4 text-[clamp(2.2rem,4vw,3.2rem)] font-extrabold leading-[1.08] tracking-[-0.02em] text-ink text-balance">
             {title}
           </h2>
         </Reveal>

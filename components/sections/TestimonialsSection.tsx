@@ -19,7 +19,7 @@ export function TestimonialsSection({
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
             {eyebrow}
           </span>
-          <h2 className="mt-4 max-w-lg text-[clamp(2.2rem,4.2vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-ink">
+          <h2 className="mt-4 max-w-lg text-[clamp(2.2rem,4.2vw,3.6rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-ink">
             {title}
           </h2>
         </Reveal>

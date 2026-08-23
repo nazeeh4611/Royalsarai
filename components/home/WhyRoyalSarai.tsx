@@ -69,7 +69,7 @@ export function WhyRoyalSarai() {
             <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
               Why Royal Sarai Technologies
             </span>
-            <h2 className="mt-5 text-[clamp(2.2rem,4.2vw,3.6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-ink text-balance">
+            <h2 className="mt-5 text-[clamp(2.2rem,4.2vw,3.6rem)] font-extrabold leading-[1.05] tracking-[-0.02em] text-ink text-balance">
               Built in Dubai. Structured to work wherever your business does.
             </h2>
           </Reveal>
@@ -96,7 +96,7 @@ export function WhyRoyalSarai() {
               >
                 <div className="relative h-full w-full overflow-hidden rounded-[var(--radius-md)] border-[3px] border-paper-dim shadow-[var(--shadow-lg)]">
                   <Image
-                    src="/cyberhome.png"
+                    src="/websmall.webp"
                     alt="Data security operations and access control systems"
                     fill
                     sizes="(min-width: 1024px) 24vw, 40vw"
@@ -117,7 +117,7 @@ export function WhyRoyalSarai() {
               <span className="flex size-11 items-center justify-center rounded-[var(--radius-sm)] bg-ink/5">
                 <point.Icon className="size-5 text-ink" strokeWidth={1.75} />
               </span>
-              <h3 className="mt-5 text-lg font-semibold text-ink">
+              <h3 className="mt-5 text-lg font-bold text-ink">
                 {point.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-soft">

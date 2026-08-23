@@ -104,7 +104,7 @@ export function ProcessTimeline() {
             <span className="relative flex size-12 items-center justify-center rounded-full border border-line-strong">
               <step.Icon className="size-5 text-ink" strokeWidth={1.6} />
             </span>
-            <h3 className="relative mt-5 text-xl font-bold tracking-[-0.01em] text-ink">
+            <h3 className="relative mt-5 text-xl font-extrabold tracking-[-0.01em] text-ink">
               {step.title}
             </h3>
             <p className="relative mt-2 max-w-[22ch] text-sm leading-relaxed text-ink-soft">

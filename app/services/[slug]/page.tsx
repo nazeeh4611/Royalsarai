@@ -50,6 +50,12 @@ export default async function ServiceDetailPage({
 
   const related = servicesContent.filter((s) => s.slug !== service.slug);
 
+  // The web design & development detail page hero uses its own dedicated
+  // image, distinct from the "service-web-hero" id still used by this same
+  // service's card on the /services listing page — kept as two separate
+  // media entries specifically so changing one never affects the other.
+  const heroMediaId = service.slug === "web-design-development" ? "service-web-detail-hero" : service.media.id;
+
   return (
     <>
       <JsonLd
@@ -77,7 +83,7 @@ export default async function ServiceDetailPage({
           { label: "Services", href: "/services" },
           { label: service.shortLabel },
         ]}
-        visual={<MediaFrame id={service.media.id} scene={service.media.scene} tone={service.media.tone} className="aspect-[4/3]" priority />}
+        visual={<MediaFrame id={heroMediaId} scene={service.media.scene} tone={service.media.tone} className="aspect-[4/3]" priority />}
       />
 
       <section className="border-y border-line bg-paper py-24 lg:py-28">
@@ -114,7 +120,7 @@ export default async function ServiceDetailPage({
           <Stagger className="mt-12 grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-line bg-line sm:grid-cols-2">
             {service.capabilities.map((cap) => (
               <div key={cap.title} data-reveal className="bg-surface p-8">
-                <h3 className="text-lg font-semibold text-ink">{cap.title}</h3>
+                <h3 className="text-lg font-bold text-ink">{cap.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                   {cap.description}
                 </p>
@@ -178,7 +184,7 @@ export default async function ServiceDetailPage({
             {service.businessValue.map((v) => (
               <div key={v.title} data-reveal>
                 <Check className="size-5 text-indigo" strokeWidth={1.8} />
-                <h3 className="mt-4 text-base font-semibold text-ink">{v.title}</h3>
+                <h3 className="mt-4 text-base font-bold text-ink">{v.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                   {v.description}
                 </p>

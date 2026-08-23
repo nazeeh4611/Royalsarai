@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
-import { AbstractScene } from "@/components/media/AbstractScene";
+import { MediaFrame } from "@/components/media/MediaFrame";
 import { insightsArticles } from "@/lib/insights-content";
+import type { MediaId } from "@/lib/media";
 
 export function InsightsPreview() {
   const articles = insightsArticles.slice(0, 3);
@@ -15,7 +16,7 @@ export function InsightsPreview() {
             <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-faint">
               Insights
             </span>
-            <h2 className="mt-3 text-[clamp(1.6rem,2.6vw,2.2rem)] font-bold leading-[1.1] tracking-[-0.02em] text-ink">
+            <h2 className="mt-3 text-[clamp(1.6rem,2.6vw,2.2rem)] font-extrabold leading-[1.1] tracking-[-0.02em] text-ink">
               Practical thinking on technology and security
             </h2>
           </Reveal>
@@ -38,17 +39,19 @@ export function InsightsPreview() {
                 className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-md)] border border-line bg-surface transition-colors hover:border-ink-faint/40"
               >
                 <div className="aspect-[16/10] w-full">
-                  <AbstractScene
-                    variant={article.scene.variant}
+                  <MediaFrame
+                    id={`insight-${article.slug}` as MediaId}
+                    scene={article.scene.variant}
                     tone={article.scene.tone}
-                    alt={article.title}
+                    rounded="none"
+                    className="h-full w-full"
                   />
                 </div>
                 <div className="flex flex-1 flex-col p-5">
                   <span className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint">
                     {article.category}
                   </span>
-                  <h3 className="mt-2 text-base font-semibold leading-snug text-ink">
+                  <h3 className="mt-2 text-base font-bold leading-snug text-ink">
                     {article.title}
                   </h3>
                   <span className="mt-3 text-xs text-ink-faint">

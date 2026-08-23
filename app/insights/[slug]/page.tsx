@@ -9,7 +9,8 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Reveal } from "@/components/ui/Reveal";
-import { AbstractScene } from "@/components/media/AbstractScene";
+import { MediaFrame } from "@/components/media/MediaFrame";
+import type { MediaId } from "@/lib/media";
 import { CTASection } from "@/components/home/CTASection";
 
 export function generateStaticParams() {
@@ -106,10 +107,13 @@ export default async function InsightArticlePage({
 
           <Reveal delay={0.1}>
             <div className="mt-10 aspect-[16/9] overflow-hidden rounded-[var(--radius-lg)]">
-              <AbstractScene
-                variant={article.scene.variant}
+              <MediaFrame
+                id={`insight-${article.slug}` as MediaId}
+                scene={article.scene.variant}
                 tone={article.scene.tone}
-                alt={article.title}
+                rounded="none"
+                className="h-full w-full"
+                priority
               />
             </div>
           </Reveal>
