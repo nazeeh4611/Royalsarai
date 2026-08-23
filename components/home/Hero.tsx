@@ -7,9 +7,9 @@ import { cn } from "@/lib/cn";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 const HERO_VIDEO = {
-  webm: "/hero-video/695f8c.webm",
-  mp4: "/hero-video/695f8c.mp4",
-  poster: "/hero-video/695f8c-poster.jpg",
+  webm: "/hero.webm",
+  mp4: "/hero.mp4",
+  poster: "/hero.webp",
 };
 
 // Single source of truth for the word system: drives the giant desktop
