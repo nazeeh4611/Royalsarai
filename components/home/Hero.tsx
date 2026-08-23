@@ -1,50 +1,36 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { siteConfig } from "@/lib/site-config";
+import { cn } from "@/lib/cn";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { BrandMark } from "@/components/icons/BrandMark";
 
 const HERO_VIDEO = {
-  webm: "/hero-video/hero-loop.webm",
-  mp4: "/hero-video/hero-loop.mp4",
-  poster: "/hero-video/hero-poster.jpg",
+  webm: "/hero-video/695f8c.webm",
+  mp4: "/hero-video/695f8c.mp4",
+  poster: "/hero-video/695f8c-poster.jpg",
 };
 
 const words = [
-  { label: "web presence.", className: "text-white" },
-  { label: "cyber security.", className: "text-white" },
-  { label: "core systems.", className: "text-white" },
-  { label: "networks.", className: "text-white" },
+  { label: "web presence" },
+  { label: "cyber security" },
+  { label: "core systems" },
+  { label: "networks" },
 ];
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const eyebrowRef = useRef<HTMLDivElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
-  const wordRef = useRef<HTMLSpanElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const visualRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [cycle, setCycle] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    // Skip the autoplay video entirely below tablet width — it's the
-    // heaviest asset on the page and mobile visitors get no visual benefit
-    // from motion here that the already-optimized poster doesn't deliver.
-    // Cuts mobile page weight substantially and helps LCP/INP.
-    const mq = window.matchMedia("(max-width: 767px)");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsSmallScreen(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setIsSmallScreen(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -74,6 +60,11 @@ export function Hero() {
         { opacity: 0, y: 14 },
         { opacity: 1, y: 0, duration: 0.6, delay: 0.48, ease: "power3.out" }
       );
+      gsap.fromTo(
+        visualRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1, delay: 0.15, ease: "power3.out" }
+      );
     }
   }, []);
 
@@ -85,30 +76,49 @@ export function Hero() {
 
   useEffect(() => {
     if (reducedMotion) return;
-    const el = wordRef.current;
-    if (!el) return;
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-    );
-  }, [index, reducedMotion]);
-
-  useEffect(() => {
-    if (reducedMotion || isSmallScreen) return;
     const el = videoRef.current;
     if (!el) return;
     const playPromise = el.play();
     if (playPromise !== undefined) {
-      playPromise.catch(() => setVideoUnavailable(true));
+      playPromise.catch((err: unknown) => {
+        // AbortError just means this particular play() call was interrupted
+        // (e.g. React 18 Strict Mode's dev-only mount/unmount/remount cycle
+        // tearing down the element mid-request) — not that playback is
+        // actually unsupported. Only genuine failures should fall back.
+        const isAbort = err instanceof DOMException && err.name === "AbortError";
+        if (!isAbort) setVideoUnavailable(true);
+      });
     }
-  }, [reducedMotion, isSmallScreen]);
 
-  const showVideo = !reducedMotion && !videoUnavailable && !isSmallScreen;
+    // Safety net: a source can stall indefinitely (buffering forever)
+    // without ever firing an `error` event — the browser has no reason to
+    // fall through to the next <source> if it never rejects. Fall back to
+    // the static poster if no frame has actually decoded in time, instead
+    // of leaving a video element stuck showing nothing.
+    const stallTimer = setTimeout(() => {
+      if (el.readyState < 2) setVideoUnavailable(true);
+    }, 7000);
+    const onPlaying = () => clearTimeout(stallTimer);
+    el.addEventListener("playing", onPlaying);
+
+    return () => {
+      el.removeEventListener("playing", onPlaying);
+      clearTimeout(stallTimer);
+    };
+  }, [reducedMotion]);
+
+  const showVideo = !reducedMotion && !videoUnavailable;
 
   return (
-    <section className="hero-viewport relative isolate flex items-center overflow-hidden bg-indigo pt-24 pb-14">
-      <div className="absolute inset-0 -z-20 overflow-hidden">
+    <section className="relative overflow-hidden bg-paper">
+      {/* Full-bleed visual panel — pinned to the true right edge of the
+         viewport (not the max-width container) at lg+, matching the
+         reference's edge-to-edge treatment. Stacks as a normal in-flow
+         block above the fold on mobile instead. */}
+      <div
+        ref={visualRef}
+        className="relative order-first h-[280px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:right-0 lg:order-none lg:h-full lg:w-[45%]"
+      >
         {showVideo ? (
           <video
             ref={videoRef}
@@ -121,92 +131,90 @@ export function Hero() {
             poster={HERO_VIDEO.poster}
             onError={() => setVideoUnavailable(true)}
           >
-            <source src={HERO_VIDEO.webm} type="video/webm" />
             <source src={HERO_VIDEO.mp4} type="video/mp4" />
+            <source src={HERO_VIDEO.webm} type="video/webm" />
           </video>
         ) : (
-          <div className="hero-ken-burns absolute inset-0">
-            <Image
-              src={HERO_VIDEO.poster}
-              alt="Network engineers connecting structured cabling into a network switch"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          </div>
+          <Image
+            src={HERO_VIDEO.poster}
+            alt="A Royal Sarai Technologies team member"
+            fill
+            priority
+            sizes="(min-width: 1024px) 45vw, 100vw"
+            className="object-cover"
+          />
         )}
+        {/* Protects navbar legibility: the fixed navbar's dark text sits
+           over this panel pre-scroll, and the photo's tone varies too much
+           to guarantee contrast on its own. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 hidden h-28 bg-gradient-to-b from-white/80 via-white/30 to-transparent lg:block"
+        />
+        <BrandMark className="pointer-events-none absolute -bottom-10 -left-10 hidden h-40 w-40 text-white/80 sm:block lg:h-52 lg:w-52" />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-overlay" />
-      <div className="absolute inset-0 -z-10 hidden bg-gradient-text-scrim lg:block" />
 
-      <div className="edge container-max relative w-full">
-        <div className="max-w-2xl">
+      <div className="edge container-max relative">
+        <div className="flex min-h-0 flex-col justify-center py-14 lg:min-h-[100svh] lg:max-w-[52%] lg:py-28">
+          {/* Decorative word backdrop — large-screen editorial flourish
+             behind the heading, echoing the active cycling word. Purely
+             decorative: aria-hidden, hidden below lg for the compact
+             mobile view. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 left-[var(--edge)] -z-10 hidden select-none lg:block"
+          >
+            {words.map((w, i) => (
+              <div
+                key={w.label}
+                className={cn(
+                  "text-[3.2rem] font-extrabold uppercase leading-[1.05] tracking-tight text-ink transition-opacity duration-700 xl:text-[3.8rem]",
+                  i === index ? "opacity-[0.06]" : "opacity-[0.03]"
+                )}
+              >
+                {w.label}
+              </div>
+            ))}
+          </div>
+
           <div
             ref={eyebrowRef}
-            className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/60"
+            className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint"
           >
-            <span className="h-px w-8 bg-white/30" />
+            <span className="h-px w-8 bg-line-strong" />
             Dubai, United Arab Emirates
           </div>
 
-          <h1 className="mt-6 text-[clamp(2rem,6.2vw,6rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-white sm:leading-[0.98]">
-            <span ref={line1Ref} className="block text-balance">
-              Technology, engineered for
+          <h1 className="relative mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[clamp(2.2rem,6.2vw,5.5rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-ink">
+            <span ref={line1Ref} className="block">
+              Technology,
             </span>
-            <div className="mt-1 block h-[1.15em] overflow-hidden">
-              <span ref={wordRef} className={`block ${words[index].className}`}>
-                {words[index].label}
+            <div className="block h-[1.15em] overflow-hidden">
+              <span key={index} className="hero-word-in block text-blue">
+                {words[index].label}.
               </span>
             </div>
           </h1>
 
           <p
             ref={subRef}
-            className="mt-7 max-w-lg text-lg leading-relaxed text-white/72"
+            className="mt-7 max-w-md text-lg leading-relaxed text-ink-soft"
           >
-            Royal Sarai Technologies is a Dubai-based technology company
-            delivering web design, cyber security, computer systems and IT
-            network services — built locally, engineered for businesses that
-            operate across borders.
+            A Dubai-based technology company delivering web design, cyber
+            security, computer systems and IT network services — built
+            locally, engineered for businesses that operate across borders.
           </p>
 
-          <div ref={ctaRef} className="mt-7 flex flex-wrap items-center gap-4">
+          <div ref={ctaRef} className="mt-9">
             <MagneticButton
               href="/contact"
-              variant="solid"
+              variant="outline"
               cursorLabel="Go"
-              className="!bg-white !text-ink shadow-[var(--shadow-lg)] hover:!bg-ink hover:!text-white"
+              className="!rounded-full !border-ink/80 !px-6 !py-3.5"
             >
               Start a Project
             </MagneticButton>
-            <MagneticButton
-              href="#services"
-              variant="ghost"
-              showArrow={false}
-              cursorLabel="View"
-              className="!text-white hover:!text-white/65"
-            >
-              Explore Services
-            </MagneticButton>
           </div>
-
-          <div className="mt-7 flex flex-wrap gap-2">
-            {siteConfig.licensedActivities.map((activity) => (
-              <Link
-                key={activity.slug}
-                href={`/services/${activity.slug}`}
-                className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/85 backdrop-blur-sm transition-colors hover:bg-white/20"
-              >
-                {activity.label}
-              </Link>
-            ))}
-          </div>
-
-          <p className="mt-6 text-xs font-medium uppercase tracking-[0.12em] text-white/45">
-            Licensed by the Dubai Department of Economy &amp; Tourism ·
-            License No. {siteConfig.registration.licenseNumber}
-          </p>
         </div>
       </div>
     </section>
