@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/cn";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { BrandMark } from "@/components/icons/BrandMark";
 
 const HERO_VIDEO = {
   webm: "/hero-video/695f8c.webm",
@@ -13,12 +12,32 @@ const HERO_VIDEO = {
   poster: "/hero-video/695f8c-poster.jpg",
 };
 
-const words = [
-  { label: "web presence" },
-  { label: "cyber security" },
-  { label: "core systems" },
-  { label: "networks" },
-];
+// Single source of truth for the word system: drives the giant desktop
+// stack and the headline's inline cycling word on mobile.
+const words = ["Secure", "Connected", "Intelligent", "Automated", "Focused", "Scalable", "Responsive"];
+
+// Every word in the stack — active or not — renders at this exact
+// size/weight/leading/tracking. Only color differs, so the inactive words
+// never read as a smaller "list" next to a bigger headline: they're the
+// same scale as "Technology," itself.
+const WORD_TYPE_CLASS =
+  "block text-[clamp(2.6rem,6.2vw,5.5rem)] font-black leading-[1.05] tracking-[-0.025em] transition-colors duration-700 ease-out";
+
+const CYCLE_MS = 1800;
+// How many extra (grey) words trail below the fixed blue slot at lg+.
+const TRAIL_COUNT = 6;
+// Extra breathing room between rows, as a fraction of one row's own
+// measured height — keeps rows from ever visually touching/overlapping.
+const ROW_GAP_RATIO = 0.12;
+// The stack renders this many full cycles of `words` back-to-back, in
+// plain document flow, and a single `translateY` on the whole list slides
+// it upward by one row per tick — so position math is never per-row, just
+// one transform on one element. At CYCLE_MS=1800ms this covers ~13
+// minutes of continuous cycling before gently holding on the last word,
+// far beyond how long a hero section is realistically watched.
+const CYCLE_REPEATS = 30;
+const LOOP_WORDS = Array.from({ length: words.length * CYCLE_REPEATS }, (_, i) => words[i % words.length]);
+const MAX_TICK = LOOP_WORDS.length - 1 - TRAIL_COUNT;
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -27,8 +46,11 @@ export function Hero() {
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(0);
-  const [cycle, setCycle] = useState(true);
+  const stackRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [tick, setTick] = useState(0);
+  const [rowHeight, setRowHeight] = useState(0);
+  const [listOffset, setListOffset] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
 
@@ -36,8 +58,6 @@ export function Hero() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setReducedMotion(reduced);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCycle(!reduced);
 
     if (!reduced) {
       gsap.fromTo(
@@ -63,16 +83,51 @@ export function Hero() {
       gsap.fromTo(
         visualRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 1, delay: 0.15, ease: "power3.out" }
+        { opacity: 1, duration: 1, delay: 0.2, ease: "power3.out" }
+      );
+      gsap.fromTo(
+        stackRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1.2, delay: 0.1, ease: "power2.out" }
       );
     }
   }, []);
 
+  // Word highlight is a plain timer, deliberately NOT scroll-driven —
+  // it must keep cycling the instant the hero loads and for as long as it's
+  // on screen, independent of whether/how far the visitor has scrolled.
   useEffect(() => {
-    if (!cycle) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % words.length), 4200);
+    if (reducedMotion) return;
+    const id = setInterval(() => {
+      setTick((t) => Math.min(t + 1, MAX_TICK));
+    }, CYCLE_MS);
     return () => clearInterval(id);
-  }, [cycle]);
+  }, [reducedMotion]);
+
+  // The slide target is the CURRENT ACTIVE ROW's real `offsetTop` — a
+  // browser-computed layout value, not an estimated `index * rowHeight`.
+  // `offsetTop` ignores the list's own `transform` entirely (transform is
+  // paint-only, never affects layout), so this is exact by construction —
+  // there is no flat per-row constant that can drift out of sync with the
+  // active word's actual position, however many ticks have passed.
+  useLayoutEffect(() => {
+    const target = itemRefs.current[tick];
+    if (target) setListOffset(-target.offsetTop);
+  }, [tick, rowHeight]);
+
+  // rowHeight is only used to size the container's clipping window (how
+  // many rows are visible before overflow-hidden crops the rest) — a rough
+  // figure is fine there since it doesn't drive positioning. Re-measured on
+  // resize since the stack's font-size is a `vw`-based clamp.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const row = itemRefs.current[0];
+      if (row) setRowHeight(row.getBoundingClientRect().height * (1 + ROW_GAP_RATIO));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -108,112 +163,147 @@ export function Hero() {
   }, [reducedMotion]);
 
   const showVideo = !reducedMotion && !videoUnavailable;
+  const activeWord = LOOP_WORDS[tick];
 
   return (
-    <section className="relative overflow-hidden bg-paper">
-      {/* Full-bleed visual panel — pinned to the true right edge of the
-         viewport (not the max-width container) at lg+, matching the
-         reference's edge-to-edge treatment. Stacks as a normal in-flow
-         block above the fold on mobile instead. */}
-      <div
-        ref={visualRef}
-        className="relative order-first h-[280px] w-full sm:h-[360px] lg:absolute lg:inset-y-0 lg:right-0 lg:order-none lg:h-full lg:w-[45%]"
-      >
-        {showVideo ? (
-          <video
-            ref={videoRef}
-            className="h-full w-full object-cover"
-            muted
-            autoPlay
-            loop
-            playsInline
-            preload="auto"
-            poster={HERO_VIDEO.poster}
-            onError={() => setVideoUnavailable(true)}
-          >
-            <source src={HERO_VIDEO.mp4} type="video/mp4" />
-            <source src={HERO_VIDEO.webm} type="video/webm" />
-          </video>
-        ) : (
-          <Image
-            src={HERO_VIDEO.poster}
-            alt="A Royal Sarai Technologies team member"
-            fill
-            priority
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            className="object-cover"
-          />
-        )}
-        {/* Protects navbar legibility: the fixed navbar's dark text sits
-           over this panel pre-scroll, and the photo's tone varies too much
-           to guarantee contrast on its own. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 hidden h-28 bg-gradient-to-b from-white/80 via-white/30 to-transparent lg:block"
-        />
-        <BrandMark className="pointer-events-none absolute -bottom-10 -left-10 hidden h-40 w-40 text-white/80 sm:block lg:h-52 lg:w-52" />
-      </div>
-
-      <div className="edge container-max relative">
-        <div className="flex min-h-0 flex-col justify-center py-14 lg:min-h-[100svh] lg:max-w-[52%] lg:py-28">
-          {/* Decorative word backdrop — large-screen editorial flourish
-             behind the heading, echoing the active cycling word. Purely
-             decorative: aria-hidden, hidden below lg for the compact
-             mobile view. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 left-[var(--edge)] -z-10 hidden select-none lg:block"
-          >
-            {words.map((w, i) => (
-              <div
-                key={w.label}
-                className={cn(
-                  "text-[3.2rem] font-extrabold uppercase leading-[1.05] tracking-tight text-ink transition-opacity duration-700 xl:text-[3.8rem]",
-                  i === index ? "opacity-[0.06]" : "opacity-[0.03]"
-                )}
-              >
-                {w.label}
-              </div>
-            ))}
-          </div>
-
+    <section className="relative overflow-hidden bg-white">
+      {/* The outer row is unpadded vertically (only .edge's horizontal
+         padding applies) and stretches to a full viewport height — that's
+         what lets the video bleed truly edge-to-edge top-and-bottom.
+         Deliberately NOT `container-max`: that class caps+centers content
+         at 1400px, which would leave a dead gap between the video and the
+         true right edge of the viewport on any screen wider than 1400px.
+         The reference composition bleeds to the actual viewport edge at
+         every width, matching the unscrolled navbar (also edge-only, no
+         container-max — see Navbar.tsx). The text+stack block is a flex
+         sibling that keeps its OWN generous top padding for navbar
+         clearance, independent of the video. */}
+      <div className="edge relative lg:flex lg:min-h-[100svh] lg:items-stretch">
+        <div className="flex flex-1 flex-col justify-center gap-10 pb-16 pt-28 lg:gap-0 lg:pb-20 lg:pt-40">
+          {/* Eyebrow sits ABOVE both the heading and the word stack (not
+             just above the heading) so the text column and the stack
+             column both start their content from the exact same shared
+             top offset at lg+. That's what lets "Technology," and the
+             stack's first line read as one continuous headline instead of
+             two independently-centered blocks with a gap between them. */}
           <div
             ref={eyebrowRef}
-            className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint"
+            className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#5D768B]"
           >
-            <span className="h-px w-8 bg-line-strong" />
+            <span className="h-px w-8 bg-[#C8D9E6]" />
             Dubai, United Arab Emirates
           </div>
 
-          <h1 className="relative mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[clamp(2.2rem,6.2vw,5.5rem)] font-extrabold leading-[1.02] tracking-[-0.025em] text-ink">
-            <span ref={line1Ref} className="block">
-              Technology,
-            </span>
-            <div className="block h-[1.15em] overflow-hidden">
-              <span key={index} className="hero-word-in block text-blue">
-                {words[index].label}.
-              </span>
+          <div className="mt-6 grid gap-10 lg:grid-cols-[0.8fr_1fr] lg:items-start lg:gap-6">
+            {/* 1. TEXT — static headline, description, CTA. No inline
+               cycling word at lg+: the adjacent stack column carries that
+               role instead, so nothing is duplicated. */}
+            <div className="flex flex-col">
+              <h1 className="text-[clamp(2.6rem,6.2vw,5.5rem)] font-black leading-[1.05] tracking-[-0.025em] text-[#13273F]">
+                <span ref={line1Ref} className="block">
+                  Technology,
+                </span>
+                <div className="block h-[1.15em] overflow-hidden lg:hidden">
+                  <span key={tick} className="hero-word-in block text-blue">
+                    {activeWord}
+                  </span>
+                </div>
+              </h1>
+
+              <p
+                ref={subRef}
+                className="mt-6 max-w-md text-lg leading-relaxed text-[#13273F]/65"
+              >
+                A Dubai-based technology company delivering web design, cyber
+                security, computer systems and IT network services — built
+                locally, engineered for businesses that operate across
+                borders.
+              </p>
+
+              <div ref={ctaRef} className="mt-8">
+                <MagneticButton
+                  href="/contact"
+                  variant="outline"
+                  cursorLabel="Go"
+                  className="!rounded-full !border-[#13273F]/70 !px-6 !py-3.5 !text-[#13273F]"
+                >
+                  Start a Project
+                </MagneticButton>
+              </div>
             </div>
-          </h1>
 
-          <p
-            ref={subRef}
-            className="mt-7 max-w-md text-lg leading-relaxed text-ink-soft"
-          >
-            A Dubai-based technology company delivering web design, cyber
-            security, computer systems and IT network services — built
-            locally, engineered for businesses that operate across borders.
-          </p>
-
-          <div ref={ctaRef} className="mt-9">
-            <MagneticButton
-              href="/contact"
-              variant="outline"
-              cursorLabel="Go"
-              className="!rounded-full !border-ink/80 !px-6 !py-3.5"
+            {/* 2. GIANT WORD STACK — desktop only. The blue slot is always
+               the top of this block — permanently level with "Technology,"
+               and never moving. LOOP_WORDS is rendered once, in full, in
+               plain document flow (no per-row position math at all), and a
+               SINGLE `translateY` transform on that list slides it upward
+               so the active word's real, measured `offsetTop` (see
+               `listOffset` above) always lands at y=0 — exact by
+               construction, never estimated, so it can't drift out of sync
+               with which word is actually colored blue. */}
+            <div
+              ref={stackRef}
+              aria-hidden="true"
+              className="pointer-events-none relative hidden max-h-[64vh] select-none overflow-hidden lg:block"
+              style={rowHeight ? { height: (TRAIL_COUNT + 1) * rowHeight } : undefined}
             >
-              Start a Project
-            </MagneticButton>
+              <div
+                className="flex flex-col will-change-transform"
+                style={{
+                  transform: `translateY(${listOffset}px)`,
+                  transition: "transform 0.8s cubic-bezier(0.65,0,0.35,1)",
+                }}
+              >
+                {LOOP_WORDS.map((word, i) => (
+                  <div
+                    key={i}
+                    ref={(el) => {
+                      itemRefs.current[i] = el;
+                    }}
+                    className={cn(WORD_TYPE_CLASS, i === tick ? "text-blue" : "text-[#C8D9E6]")}
+                  >
+                    {word}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. VIDEO — mobile: a full-width block below the content, at
+           the source's native 2:3 ratio so nothing is cropped away.
+           Desktop: a flex sibling of the padded text+stack block above —
+           so it stretches to the outer row's full unpadded height and
+           bleeds truly edge-to-edge, top and bottom, past the content edge
+           toward the viewport. A real part of the composition, not a card
+           floating on the side. */}
+        <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden sm:aspect-[4/3] lg:-mr-[var(--edge)] lg:aspect-auto lg:w-[27%] lg:self-stretch">
+          <div ref={visualRef} className="relative h-full w-full">
+            {showVideo ? (
+              <video
+                ref={videoRef}
+                className="h-full w-full object-cover object-[50%_15%]"
+                muted
+                autoPlay
+                loop
+                playsInline
+                preload="auto"
+                poster={HERO_VIDEO.poster}
+                onError={() => setVideoUnavailable(true)}
+              >
+                <source src={HERO_VIDEO.mp4} type="video/mp4" />
+                <source src={HERO_VIDEO.webm} type="video/webm" />
+              </video>
+            ) : (
+              <Image
+                src={HERO_VIDEO.poster}
+                alt="A Royal Sarai Technologies team member"
+                fill
+                priority
+                sizes="(min-width: 1024px) 30vw, 100vw"
+                className="object-cover object-[50%_15%]"
+              />
+            )}
           </div>
         </div>
       </div>
