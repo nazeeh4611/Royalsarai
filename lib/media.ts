@@ -113,7 +113,7 @@ export const mediaLibrary = {
   "insights-hero": slot({
     category: "abstract-technology",
     alt: "Abstract technology and data visualisation",
-    src: "/insighthero.webp",
+    src: "/insihero.webp",
     fit: "cover",
   }),
   "insight-security-architecture-before-first-line-of-code": slot({

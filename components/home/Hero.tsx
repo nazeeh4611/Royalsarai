@@ -3,25 +3,33 @@
 import Image from "next/image";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/cn";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
-const HERO_VIDEO = {
-  webm: "/heroside.webm",
-  mp4: "/heroside.mp4",
-  poster: "/heroside.webp",
-};
+let pluginRegistered = false;
+function ensureSplitText() {
+  if (!pluginRegistered) {
+    gsap.registerPlugin(SplitText);
+    pluginRegistered = true;
+  }
+}
 
 // Single source of truth for the word system: drives the giant desktop
-// stack and the headline's inline cycling word on mobile.
-const words = ["Secure", "Connected", "Intelligent", "Automated", "Focused", "Scalable", "Responsive"];
+// stack and the headline's inline cycling word on mobile. Each one reads
+// as a compound phrase with the static "Technology" beside it — "Technology
+// Secure", "Technology Ready", "Technology Scalable".
+const words = ["Secure", "Connected", "Ready", "Automated", "Focused", "Scalable", "Responsive"];
 
-// Every word in the stack — active or not — renders at this exact
-// size/weight/leading/tracking. Only color differs, so the inactive words
-// never read as a smaller "list" next to a bigger headline: they're the
-// same scale as "Technology," itself.
-const WORD_TYPE_CLASS =
-  "block text-[clamp(2.6rem,6.2vw,5.5rem)] font-black leading-[1.05] tracking-[-0.025em] transition-colors duration-700 ease-out";
+// "Technology" and every word in the stack — active or not — render at
+// this exact size/weight/leading/tracking, in the same heavy display face
+// (Archivo Black — deliberately bolder than Manrope even at its own black
+// weight). Only color differs, so the inactive words never read as a
+// smaller "list" next to a bigger headline: they're the same scale as
+// "Technology" itself. No side visual competes for width anymore, so this
+// is deliberately large — the type IS the hero.
+const HEADLINE_SIZE = "font-display text-[clamp(3.1rem,6.8vw,6.9rem)] font-normal leading-[0.94] tracking-[-0.01em]";
+const WORD_TYPE_CLASS = cn(HEADLINE_SIZE, "block transition-colors duration-700 ease-out");
 
 const CYCLE_MS = 1800;
 // How many extra (grey) words trail below the fixed blue slot at lg+.
@@ -39,58 +47,86 @@ const CYCLE_REPEATS = 30;
 const LOOP_WORDS = Array.from({ length: words.length * CYCLE_REPEATS }, (_, i) => words[i % words.length]);
 const MAX_TICK = LOOP_WORDS.length - 1 - TRAIL_COUNT;
 
+// Cursor tilt is capped to this many degrees either way — enough to feel
+// alive, subtle enough that giant type never looks unstable.
+const TILT_DEG = 5;
+
+// Warm gold sampled from herobg.webp's light beams — the one accent color
+// against the image's navy/black, used only for the active word so it
+// still pops the way `text-blue` did on the old white background.
+const ACCENT_GOLD = "#e3b567";
+
 export function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const eyebrowRef = useRef<HTMLDivElement>(null);
+  const lineAccentRef = useRef<HTMLSpanElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tick, setTick] = useState(0);
   const [rowHeight, setRowHeight] = useState(0);
   const [listOffset, setListOffset] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [videoUnavailable, setVideoUnavailable] = useState(false);
 
+  // Entrance choreography: eyebrow rule draws in, "Technology" reveals
+  // letter by letter through a clipped mask, then sub/CTA/stack settle in
+  // behind it.
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setReducedMotion(reduced);
+    if (reduced) return;
 
-    if (!reduced) {
+    ensureSplitText();
+    let split: SplitText | undefined;
+
+    const ctx = gsap.context(() => {
       gsap.fromTo(
         eyebrowRef.current,
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }
       );
       gsap.fromTo(
-        line1Ref.current,
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.8, delay: 0.1, ease: "power3.out" }
+        lineAccentRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.7, delay: 0.05, ease: "power3.out", transformOrigin: "left center" }
       );
+
+      if (line1Ref.current) {
+        split = SplitText.create(line1Ref.current, { type: "chars", mask: "chars" });
+        gsap.from(split.chars, {
+          yPercent: 130,
+          opacity: 0,
+          duration: 0.9,
+          stagger: 0.032,
+          delay: 0.15,
+          ease: "power4.out",
+        });
+      }
+
       gsap.fromTo(
         subRef.current,
         { opacity: 0, y: 18 },
-        { opacity: 1, y: 0, duration: 0.7, delay: 0.35, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.7, delay: 0.55, ease: "power3.out" }
       );
       gsap.fromTo(
         ctaRef.current,
         { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.6, delay: 0.48, ease: "power3.out" }
-      );
-      gsap.fromTo(
-        visualRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 1, delay: 0.2, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.6, delay: 0.68, ease: "power3.out" }
       );
       gsap.fromTo(
         stackRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 1.2, delay: 0.1, ease: "power2.out" }
+        { opacity: 1, duration: 1.2, delay: 0.3, ease: "power2.out" }
       );
-    }
+    });
+
+    return () => {
+      ctx.revert();
+      split?.revert();
+    };
   }, []);
 
   // Word highlight is a plain timer, deliberately NOT scroll-driven —
@@ -129,181 +165,161 @@ export function Hero() {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
+  // Each newly active row gets a soft focus-pull — scaling up from a
+  // slight blur — layered on top of the plain colour transition and the
+  // stack's own slide, so a word "arriving" reads as more than a repaint.
   useEffect(() => {
     if (reducedMotion) return;
-    const el = videoRef.current;
+    const el = itemRefs.current[tick];
     if (!el) return;
-    const playPromise = el.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((err: unknown) => {
-        // AbortError just means this particular play() call was interrupted
-        // (e.g. React 18 Strict Mode's dev-only mount/unmount/remount cycle
-        // tearing down the element mid-request) — not that playback is
-        // actually unsupported. Only genuine failures should fall back.
-        const isAbort = err instanceof DOMException && err.name === "AbortError";
-        if (!isAbort) setVideoUnavailable(true);
-      });
-    }
+    gsap.fromTo(
+      el,
+      { scale: 0.92, filter: "blur(10px)" },
+      { scale: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }
+    );
+  }, [tick, reducedMotion]);
 
-    // Safety net: a source can stall indefinitely (buffering forever)
-    // without ever firing an `error` event — the browser has no reason to
-    // fall through to the next <source> if it never rejects. Fall back to
-    // the static poster if no frame has actually decoded in time, instead
-    // of leaving a video element stuck showing nothing.
-    const stallTimer = setTimeout(() => {
-      if (el.readyState < 2) setVideoUnavailable(true);
-    }, 7000);
-    const onPlaying = () => clearTimeout(stallTimer);
-    el.addEventListener("playing", onPlaying);
+  // Desktop-only cursor tilt: the whole headline+stack plane leans very
+  // slightly toward the pointer, like a single tilted pane of glass.
+  useEffect(() => {
+    if (reducedMotion) return;
+    const el = gridRef.current;
+    if (!el) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1024px)").matches) return;
 
+    gsap.set(el, { transformPerspective: 1000, transformOrigin: "center" });
+    const setX = gsap.quickTo(el, "rotationY", { duration: 0.6, ease: "power3.out" });
+    const setY = gsap.quickTo(el, "rotationX", { duration: 0.6, ease: "power3.out" });
+
+    const onMove = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5));
+      const py = Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5));
+      setX(px * TILT_DEG);
+      setY(-py * TILT_DEG);
+    };
+    const onLeave = () => {
+      setX(0);
+      setY(0);
+    };
+
+    window.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
     return () => {
-      el.removeEventListener("playing", onPlaying);
-      clearTimeout(stallTimer);
+      window.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
     };
   }, [reducedMotion]);
 
-  const showVideo = !reducedMotion && !videoUnavailable;
   const activeWord = LOOP_WORDS[tick];
 
   return (
-    <section className="relative overflow-hidden bg-white">
-      {/* The outer row is unpadded vertically (only .edge's horizontal
-         padding applies) and stretches to a full viewport height — that's
-         what lets the video bleed truly edge-to-edge top-and-bottom.
-         Deliberately NOT `container-max`: that class caps+centers content
-         at 1400px, which would leave a dead gap between the video and the
-         true right edge of the viewport on any screen wider than 1400px.
-         The reference composition bleeds to the actual viewport edge at
-         every width, matching the unscrolled navbar (also edge-only, no
-         container-max — see Navbar.tsx). The text+stack block is a flex
-         sibling that keeps its OWN generous top padding for navbar
-         clearance, independent of the video. */}
-      <div className="edge relative lg:flex lg:min-h-[100svh] lg:items-stretch">
-        <div className="flex flex-1 flex-col justify-center gap-10 pb-16 pt-28 lg:gap-0 lg:pb-20 lg:pt-40">
-          {/* Eyebrow sits ABOVE both the heading and the word stack (not
-             just above the heading) so the text column and the stack
-             column both start their content from the exact same shared
-             top offset at lg+. That's what lets "Technology," and the
-             stack's first line read as one continuous headline instead of
-             two independently-centered blocks with a gap between them. */}
-          <div
-            ref={eyebrowRef}
-            className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#5D768B]"
-          >
-            <span className="h-px w-8 bg-[#C8D9E6]" />
-            Dubai, United Arab Emirates
-          </div>
+    <section className="on-dark relative isolate overflow-hidden bg-paper">
+      <Image
+        src="/herobg.webp"
+        alt=""
+        aria-hidden="true"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover opacity-55"
+      />
+      {/* Darkens the left/text half only — the image is already near-black
+         there, this just guarantees contrast — and leaves the light beam
+         and the word stack on the right untouched. */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/60 via-black/15 to-transparent" />
 
-          <div className="mt-6 grid gap-10 lg:grid-cols-[0.8fr_1fr] lg:items-start lg:gap-6">
-            {/* 1. TEXT — static headline, description, CTA. No inline
-               cycling word at lg+: the adjacent stack column carries that
-               role instead, so nothing is duplicated. */}
-            <div className="flex flex-col">
-              <h1 className="text-[clamp(2.6rem,6.2vw,5.5rem)] font-black leading-[1.05] tracking-[-0.025em] text-[#13273F]">
-                <span ref={line1Ref} className="block">
-                  Technology,
-                </span>
-                <div className="block h-[1.15em] overflow-hidden lg:hidden">
-                  <span key={tick} className="hero-word-in block text-blue">
-                    {activeWord}
-                  </span>
-                </div>
-              </h1>
-
-              <p
-                ref={subRef}
-                className="mt-6 max-w-md text-lg leading-relaxed text-[#13273F]/65"
-              >
-                A Dubai-based technology company delivering web design, cyber
-                security, computer systems and IT network services — built
-                locally, engineered for businesses that operate across
-                borders.
-              </p>
-
-              <div ref={ctaRef} className="mt-8">
-                <MagneticButton
-                  href="/contact"
-                  variant="outline"
-                  cursorLabel="Go"
-                  className="!rounded-full !border-[#13273F]/70 !px-6 !py-3.5 !text-[#13273F]"
-                >
-                  Start a Project
-                </MagneticButton>
-              </div>
-            </div>
-
-            {/* 2. GIANT WORD STACK — desktop only. The blue slot is always
-               the top of this block — permanently level with "Technology,"
-               and never moving. LOOP_WORDS is rendered once, in full, in
-               plain document flow (no per-row position math at all), and a
-               SINGLE `translateY` transform on that list slides it upward
-               so the active word's real, measured `offsetTop` (see
-               `listOffset` above) always lands at y=0 — exact by
-               construction, never estimated, so it can't drift out of sync
-               with which word is actually colored blue. */}
-            <div
-              ref={stackRef}
-              aria-hidden="true"
-              className="pointer-events-none relative hidden max-h-[64vh] select-none overflow-hidden lg:block"
-              style={rowHeight ? { height: (TRAIL_COUNT + 1) * rowHeight } : undefined}
-            >
-              <div
-                className="flex flex-col will-change-transform"
-                style={{
-                  transform: `translateY(${listOffset}px)`,
-                  transition: "transform 0.8s cubic-bezier(0.65,0,0.35,1)",
-                }}
-              >
-                {LOOP_WORDS.map((word, i) => (
-                  <div
-                    key={i}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    className={cn(WORD_TYPE_CLASS, i === tick ? "text-blue" : "text-[#C8D9E6]")}
-                  >
-                    {word}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <div className="edge relative flex min-h-[100svh] flex-col justify-center gap-10 pb-24 pt-32 lg:gap-0 lg:pb-28 lg:pt-36">
+        {/* Eyebrow sits ABOVE both the heading and the word stack (not
+           just above the heading) so the text column and the stack column
+           both start their content from the exact same shared top offset
+           at lg+. That's what lets "Technology" and the stack's first
+           line read as one continuous headline instead of two
+           independently-centered blocks with a gap between them. */}
+        <div
+          ref={eyebrowRef}
+          className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint"
+        >
+          <span ref={lineAccentRef} className="h-px w-8" style={{ backgroundColor: ACCENT_GOLD }} />
+          Dubai, United Arab Emirates
         </div>
 
-        {/* 3. VIDEO — mobile: a full-width block below the content, at
-           the source's native 2:3 ratio so nothing is cropped away.
-           Desktop: a flex sibling of the padded text+stack block above —
-           so it stretches to the outer row's full unpadded height and
-           bleeds truly edge-to-edge, top and bottom, past the content edge
-           toward the viewport. A real part of the composition, not a card
-           floating on the side. */}
-        <div className="relative aspect-[2/3] w-full shrink-0 overflow-hidden sm:aspect-[4/3] lg:-mr-[var(--edge)] lg:aspect-auto lg:w-[27%] lg:self-stretch">
-          <div ref={visualRef} className="relative h-full w-full">
-            {showVideo ? (
-              <video
-                ref={videoRef}
-                className="h-full w-full object-cover object-[50%_15%]"
-                muted
-                autoPlay
-                loop
-                playsInline
-                preload="auto"
-                poster={HERO_VIDEO.poster}
-                onError={() => setVideoUnavailable(true)}
+        {/* lg+: the left track is fixed just wide enough for "Technology" (not
+           an even split) and sits a tight gap-3 from the stack column, so
+           "Technology" and the stack's active word land close together on
+           one shared row and read as a single running phrase — "Technology
+           Secure", "Technology Connected" — rather than two separate
+           headline blocks. */}
+        <div ref={gridRef} className="mt-6 grid gap-10 lg:grid-cols-[50rem_1fr] lg:items-start lg:gap-3">
+          {/* 1. TEXT — static headline, description, CTA. No inline
+             cycling word at lg+: the adjacent stack column carries that
+             role instead, so nothing is duplicated. */}
+          <div className="flex flex-col">
+            <h1 className={cn(HEADLINE_SIZE, "text-ink")}>
+              <span ref={line1Ref} className="block">
+                Technology
+              </span>
+              <div className="block h-[1.15em] overflow-hidden lg:hidden">
+                <span key={tick} className="hero-word-in block" style={{ color: ACCENT_GOLD }}>
+                  {activeWord}
+                </span>
+              </div>
+            </h1>
+
+            <p ref={subRef} className="mt-7 max-w-xs text-xl leading-relaxed text-ink-soft">
+              A Dubai-based technology company delivering web design, cyber
+              security, computer systems and IT network services — built
+              locally, engineered for businesses that operate across
+              borders.
+            </p>
+
+            <div ref={ctaRef} className="mt-9">
+              <MagneticButton
+                href="/contact"
+                variant="outline"
+                cursorLabel="Go"
+                className="!rounded-full !border-ink/70 !px-8 !py-4 !text-base !text-ink"
               >
-                <source src={HERO_VIDEO.mp4} type="video/mp4" />
-                <source src={HERO_VIDEO.webm} type="video/webm" />
-              </video>
-            ) : (
-              <Image
-                src={HERO_VIDEO.poster}
-                alt="A Royal Sarai Technologies team member"
-                fill
-                priority
-                sizes="(min-width: 1024px) 30vw, 100vw"
-                className="object-cover object-[50%_15%]"
-              />
-            )}
+                Start a Project
+              </MagneticButton>
+            </div>
+          </div>
+
+          {/* 2. GIANT WORD STACK — desktop only. The gold slot is always
+             the top of this block — permanently level with "Technology"
+             and never moving. LOOP_WORDS is rendered once, in full, in
+             plain document flow (no per-row position math at all), and a
+             SINGLE `translateY` transform on that list slides it upward so
+             the active word's real, measured `offsetTop` (see
+             `listOffset` above) always lands at y=0 — exact by
+             construction, never estimated, so it can't drift out of sync
+             with which word is actually the highlighted one. */}
+          <div
+            ref={stackRef}
+            aria-hidden="true"
+            className="pointer-events-none relative hidden max-h-[64vh] select-none overflow-hidden lg:block"
+            style={rowHeight ? { height: (TRAIL_COUNT + 1) * rowHeight } : undefined}
+          >
+            <div
+              className="flex flex-col will-change-transform"
+              style={{
+                transform: `translateY(${listOffset}px)`,
+                transition: "transform 0.8s cubic-bezier(0.65,0,0.35,1)",
+              }}
+            >
+              {LOOP_WORDS.map((word, i) => (
+                <div
+                  key={i}
+                  ref={(el) => {
+                    itemRefs.current[i] = el;
+                  }}
+                  className={cn(WORD_TYPE_CLASS, i !== tick && "text-ink-faint")}
+                  style={i === tick ? { color: ACCENT_GOLD } : undefined}
+                >
+                  {word}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

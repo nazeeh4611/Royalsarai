@@ -15,39 +15,7 @@ function isActivePath(pathname: string, href: string) {
 
 export function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    // Two thresholds, not one: with Lenis easing the scroll position,
-    // a single cutoff flips back and forth every time the eased value
-    // settles near it. Entering "floating" state takes a bigger scroll
-    // than leaving it, so hovering near the boundary doesn't flicker.
-    let isScrolled = false;
-    let frame = 0;
-
-    const evaluate = () => {
-      const y = window.scrollY;
-      const next = isScrolled ? y > 12 : y > 56;
-      if (next !== isScrolled) {
-        isScrolled = next;
-        setScrolled(next);
-      }
-      frame = 0;
-    };
-
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(evaluate);
-    };
-
-    evaluate();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
 
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
@@ -59,28 +27,11 @@ export function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        <div
-          style={{
-            // Driven directly instead of via a Tailwind backdrop-blur-*
-            // class: transitioning between "no backdrop-filter at all"
-            // and "blur(24px)" can't interpolate (one side has no
-            // <filter-function-list> to animate from), so the glass
-            // effect used to pop in/out instead of fading. Two blur()
-            // values of different amounts interpolate correctly.
-            backdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
-            WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(0px)",
-          }}
-          className={cn(
-            // Border width and vertical padding are identical between both
-            // states (only colour/margin/max-width/radius differ) so the
-            // hairline never "pops" in at a different width and the logo/
-            // nav never drift vertically when the state flips.
-            "mx-auto flex items-center justify-between border transition-all duration-500 ease-out",
-            scrolled
-              ? "mt-3 max-w-[calc(var(--container-max)-2rem)] rounded-full border-line bg-surface/85 px-4 py-4 shadow-[var(--shadow-sm)]"
-              : "mt-0 w-full max-w-[100vw] rounded-none border-transparent bg-transparent px-[var(--edge)] py-7 shadow-none"
-          )}
-        >
+        {/* Always the floating pill — no separate transparent/top-of-page
+           state to toggle, so the nav looks and reads the same whether the
+           page behind it is a light section or the home hero's dark
+           image. */}
+        <div className="mx-auto flex max-w-[calc(var(--container-max)-2rem)] items-center justify-between rounded-full border border-line bg-surface/85 px-4 py-4 shadow-[var(--shadow-sm)] backdrop-blur-2xl mt-3">
           <Link
             href="/"
             className="flex translate-y-[6px] flex-col items-start gap-1 text-ink"

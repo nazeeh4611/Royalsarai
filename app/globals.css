@@ -90,6 +90,7 @@
   --color-line-strong: var(--line-strong);
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-archivo-black), var(--font-manrope), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);

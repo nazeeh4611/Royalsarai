@@ -1,16 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
+import { Archivo_Black, Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { WhatsAppWidget } from "@/components/widgets/WhatsAppWidget";
+import { CallWidget } from "@/components/widgets/CallWidget";
 
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+  display: "swap",
+});
+
+// A single, unapologetically heavy display face reserved for the hero's
+// kinetic headline/word stack — noticeably bolder than Manrope even at its
+// own black weight, so the giant type reads as intentional, not just big.
+const archivoBlack = Archivo_Black({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-archivo-black",
   display: "swap",
 });
 
@@ -88,7 +98,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={manrope.variable}>
+    <html lang="en" className={`${manrope.variable} ${archivoBlack.variable}`}>
       <body>
         <script
           type="application/ld+json"
@@ -101,7 +111,7 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <Footer />
-          <WhatsAppWidget />
+          <CallWidget />
         </SmoothScroll>
       </body>
     </html>

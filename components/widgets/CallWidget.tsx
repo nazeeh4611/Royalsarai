@@ -2,14 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, X } from "lucide-react";
+import { ArrowUpRight, Phone, X } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
-import { WhatsAppGlyph } from "@/components/icons/WhatsAppGlyph";
 
-const DEFAULT_MESSAGE =
-  "Hi Royal Sarai Technologies, I'd like to ask about a project.";
-
-export function WhatsAppWidget() {
+export function CallWidget() {
   const [open, setOpen] = useState(false);
   const [canHover, setCanHover] = useState(false);
 
@@ -19,9 +15,6 @@ export function WhatsAppWidget() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCanHover(window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   }, []);
-
-  const digits = siteConfig.contact.whatsappNumber.replace(/\D/g, "");
-  const waHref = `https://wa.me/${digits}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
 
   const hoverHandlers = canHover
     ? {
@@ -47,7 +40,7 @@ export function WhatsAppWidget() {
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <span className="flex size-9 items-center justify-center rounded-full bg-ink text-paper">
-                  <WhatsAppGlyph className="size-[18px]" />
+                  <Phone className="size-[18px]" strokeWidth={2} />
                 </span>
                 <span className="text-sm font-semibold text-ink">
                   Royal Sarai Technologies
@@ -64,16 +57,14 @@ export function WhatsAppWidget() {
             </div>
 
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-              Have a question? We usually reply within a short time.
+              Prefer to talk? Give us a call — we&rsquo;re happy to help.
             </p>
 
             <a
-              href={waHref}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={siteConfig.contact.phoneHref}
               className="group mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-paper transition-colors hover:bg-indigo"
             >
-              Start Chat
+              Call Now
               <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
           </motion.div>
@@ -84,7 +75,7 @@ export function WhatsAppWidget() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        aria-label="Chat with us on WhatsApp"
+        aria-label="Call us"
         className="relative flex size-14 items-center justify-center rounded-full bg-ink text-paper shadow-[var(--shadow-lg)] transition-transform duration-300 hover:scale-105"
       >
         {!open && (
@@ -93,10 +84,10 @@ export function WhatsAppWidget() {
             className="breathe-ring absolute inset-0 rounded-full border-2 border-ink"
           />
         )}
-        <WhatsAppGlyph className="size-6" />
+        <Phone className="size-6" strokeWidth={2} />
         <span
           aria-hidden="true"
-          className="absolute right-0 top-0 size-3 rounded-full border-2 border-paper bg-[#25D366]"
+          className="absolute right-0 top-0 size-3 rounded-full border-2 border-paper bg-blue"
         />
       </button>
     </div>
